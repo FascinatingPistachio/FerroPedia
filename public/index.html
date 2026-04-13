@@ -539,13 +539,88 @@ footer{
   border:1px solid var(--border);border-radius:4px;font-size:11px;color:var(--text4);
 }
 
+/* ── ARTICLE TAB PANELS ──────────────────── */
+.article-tab-panels{max-width:1340px;margin:0 auto;padding:40px 28px;display:none}
+.article-tab-panels.visible{display:block}
+.atp-panel{display:none}
+.atp-panel.active{display:block}
+.atp-placeholder{
+  background:var(--bg2);border:1px solid var(--border);border-radius:12px;
+  padding:48px 32px;text-align:center;
+}
+.atp-placeholder .atp-icon{font-size:48px;margin-bottom:16px}
+.atp-placeholder h3{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:600;color:var(--text);margin-bottom:10px}
+.atp-placeholder p{font-family:'Outfit',sans-serif;font-size:15px;color:var(--text3);max-width:480px;margin:0 auto;line-height:1.65}
+.atp-discussion .msg-list{list-style:none;max-width:780px;margin:0 auto}
+.msg-item{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:16px 20px;margin-bottom:16px}
+.msg-meta{font-family:'Outfit',sans-serif;font-size:12px;color:var(--text4);margin-bottom:8px;display:flex;gap:12px}
+.msg-author{color:var(--link);font-weight:600}
+.msg-text{font-family:'Crimson Pro',serif;font-size:16px;color:var(--text2);line-height:1.7}
+.msg-reply{font-family:'Outfit',sans-serif;font-size:12px;color:var(--link);cursor:pointer;margin-top:8px;background:none;border:none;padding:0}
+.msg-reply:hover{text-decoration:underline}
+.atp-history .hist-list{list-style:none;max-width:780px;margin:0 auto}
+.hist-item{display:flex;gap:16px;padding:12px 0;border-bottom:1px solid var(--border2);font-family:'Outfit',sans-serif;font-size:13px;align-items:flex-start}
+.hist-date{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text4);flex-shrink:0;padding-top:2px;min-width:130px}
+.hist-user{color:var(--link);font-weight:600;flex-shrink:0}
+.hist-summary{color:var(--text3)}
+.hist-diff{font-family:'JetBrains Mono',monospace;font-size:11px;padding:2px 6px;border-radius:4px;flex-shrink:0}
+.hist-diff.add{background:#dcfce7;color:#15803d}
+.hist-diff.mix{background:#fef9c3;color:#a16207}
+[data-theme="dark"] .hist-diff.add{background:#14532d;color:#86efac}
+[data-theme="dark"] .hist-diff.mix{background:#422006;color:#fde68a}
+
+/* ── SEARCH OVERLAY ─────────────────────── */
+#search-overlay{
+  display:none;position:fixed;inset:0;z-index:500;
+  background:rgba(0,0,0,.55);backdrop-filter:blur(4px);
+  align-items:flex-start;justify-content:center;padding-top:80px;
+}
+#search-overlay.open{display:flex}
+.search-modal{
+  background:var(--bg);border:1px solid var(--border);border-radius:14px;
+  width:100%;max-width:620px;overflow:hidden;margin:0 16px;
+  box-shadow:0 24px 60px rgba(0,0,0,.3);
+}
+.sm-input-wrap{display:flex;align-items:center;gap:10px;padding:14px 18px;border-bottom:1px solid var(--border2)}
+.sm-icon{font-size:18px;color:var(--text4)}
+#sm-input{flex:1;background:none;border:none;outline:none;font-family:'Crimson Pro',serif;font-size:18px;color:var(--text)}
+#sm-input::placeholder{color:var(--text4)}
+.sm-esc{font-family:'JetBrains Mono',monospace;font-size:10px;padding:3px 7px;background:var(--bg2);border:1px solid var(--border);border-radius:4px;color:var(--text4);cursor:pointer;flex-shrink:0}
+#sm-results{max-height:360px;overflow-y:auto;padding:8px 0}
+.sm-result{
+  padding:10px 18px;cursor:pointer;
+  border-left:3px solid transparent;transition:all .15s;
+}
+.sm-result:hover,.sm-result.focused{background:var(--accent-light);border-left-color:var(--accent)}
+.sm-result .sr-sec{font-family:'Outfit',sans-serif;font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--accent);font-weight:600;margin-bottom:3px}
+.sm-result .sr-text{font-family:'Crimson Pro',serif;font-size:15px;color:var(--text2)}
+.sm-result .sr-text mark{background:var(--gold-bg);color:var(--gold);border-radius:2px;padding:0 2px}
+.sm-empty{padding:32px 18px;text-align:center;font-family:'Outfit',sans-serif;font-size:14px;color:var(--text4)}
+.sm-footer{border-top:1px solid var(--border2);padding:9px 18px;display:flex;gap:16px;font-family:'Outfit',sans-serif;font-size:11px;color:var(--text4)}
+.sm-footer span{display:flex;align-items:center;gap:5px}
+.sm-footer kbd{font-family:'JetBrains Mono',monospace;background:var(--bg2);border:1px solid var(--border);border-radius:3px;padding:1px 5px;font-size:10px}
+
+/* ── EDIT TOAST ──────────────────────────── */
+#edit-toast{
+  position:fixed;bottom:32px;left:50%;transform:translateX(-50%) translateY(20px);
+  background:var(--text);color:var(--bg);
+  font-family:'Outfit',sans-serif;font-size:14px;
+  padding:12px 20px;border-radius:8px;z-index:600;
+  opacity:0;transition:all .3s;pointer-events:none;white-space:nowrap;
+  box-shadow:0 8px 24px rgba(0,0,0,.25);
+}
+#edit-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ── SEARCH HIGHLIGHT ─────────────────────── */
+mark.fp-hl{background:var(--gold-bg);color:var(--gold);border-radius:2px;padding:0 2px}
+
 /* ── FADE-IN ───────────────────────────────── */
 .fade{opacity:0;transform:translateY(20px);transition:opacity .6s ease,transform .6s ease}
 .fade.in{opacity:1;transform:translateY(0)}
 
 /* ── MOBILE FIXES ──────────────────────────── */
 @media(max-width:680px){
-  .header-nav a:not(#theme-btn){display:none}
+  .header-nav a:not(#theme-toggle){display:none}
   .article-hero{height:400px}
   .hero-title{font-size:36px}
 }
@@ -1079,8 +1154,70 @@ footer{
   </div>
 </footer>
 
+<!-- ═══ SEARCH OVERLAY ════════════════════════ -->
+<div id="search-overlay">
+  <div class="search-modal">
+    <div class="sm-input-wrap">
+      <span class="sm-icon">⌕</span>
+      <input id="sm-input" type="text" placeholder="Search FerroPedia…" autocomplete="off">
+      <span class="sm-esc" id="sm-close">Esc</span>
+    </div>
+    <div id="sm-results"></div>
+    <div class="sm-footer">
+      <span><kbd>↑↓</kbd> Navigate</span>
+      <span><kbd>↵</kbd> Jump to section</span>
+      <span><kbd>Esc</kbd> Close</span>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ EDIT TOAST ════════════════════════════ -->
+<div id="edit-toast">✏️ Editing is disabled — this article is semi-protected.</div>
+
+<!-- ═══ ARTICLE TAB PANELS ════════════════════ -->
+<div class="article-tab-panels" id="article-tab-panels">
+  <div class="atp-panel" id="atp-discussion">
+    <div class="atp-discussion">
+      <ul class="msg-list">
+        <li class="msg-item">
+          <div class="msg-meta"><span class="msg-author">PhysicsFan92</span><span>• 9 March 2026, 14:22 (UTC)</span></div>
+          <div class="msg-text">The section on domain theory is excellent, but I think it could benefit from a reference to the Landau-Lifshitz theory of domain structure? The energy minimization approach is covered but not by that name.</div>
+          <button class="msg-reply">↳ Reply</button>
+        </li>
+        <li class="msg-item">
+          <div class="msg-meta"><span class="msg-author">MagneticsEditor</span><span>• 11 March 2026, 08:47 (UTC)</span></div>
+          <div class="msg-text">Good point. I've added Landau & Lifshitz (1935) to the references and briefly mentioned it in the domain energy equation block. Let me know if you'd like more detail.</div>
+          <button class="msg-reply">↳ Reply</button>
+        </li>
+        <li class="msg-item">
+          <div class="msg-meta"><span class="msg-author">IronFilingsFan</span><span>• 12 April 2026, 19:05 (UTC)</span></div>
+          <div class="msg-text">The simulator is amazing! Would it be possible to add a second magnet for pole-to-pole interaction simulations? The repelling N-N configuration is particularly interesting from a physics standpoint.</div>
+          <button class="msg-reply">↳ Reply</button>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <div class="atp-panel" id="atp-edit">
+    <div class="atp-placeholder">
+      <div class="atp-icon">🔒</div>
+      <h3>This article is semi-protected</h3>
+      <p>Editing has been disabled to prevent vandalism. Only confirmed FerroPedia editors may modify this article. You may request changes on the Discussion tab.</p>
+    </div>
+  </div>
+  <div class="atp-panel" id="atp-history">
+    <div class="atp-history">
+      <ul class="hist-list">
+        <li class="hist-item"><span class="hist-date">13 Apr 2026 · 09:14</span><span class="hist-user">MagneticsEditor</span><span class="hist-summary">Updated Curie temperature ref; corrected saturation flux density in table</span><span class="hist-diff mix">±142</span></li>
+        <li class="hist-item"><span class="hist-date">28 Mar 2026 · 17:33</span><span class="hist-user">PhysicsFan92</span><span class="hist-summary">Added Landau-Lifshitz citation to domain theory section</span><span class="hist-diff add">+89</span></li>
+        <li class="hist-item"><span class="hist-date">15 Mar 2026 · 11:08</span><span class="hist-user">FeBot</span><span class="hist-summary">Auto-formatted references to FerroPedia citation style</span><span class="hist-diff mix">±34</span></li>
+        <li class="hist-item"><span class="hist-date">02 Mar 2026 · 20:50</span><span class="hist-user">IronFilingsFan</span><span class="hist-summary">Expanded Applications section with biomedical nanoparticles subsection</span><span class="hist-diff add">+312</span></li>
+        <li class="hist-item"><span class="hist-date">14 Feb 2026 · 09:22</span><span class="hist-user">MagneticsEditor</span><span class="hist-summary">Initial article creation — Iron Filings & Ferromagnetism (revision 1)</span><span class="hist-diff add">+7,840</span></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
 <script>
-// ─── DARK MODE ────────────────────────────────────────────────────────
 const toggle=document.getElementById('theme-toggle');
 function setTheme(t){
   document.documentElement.dataset.theme=t;
@@ -1126,7 +1263,7 @@ document.querySelectorAll('.acc-trigger').forEach(btn=>{
 document.querySelectorAll('.tab-btn').forEach(btn=>{
   btn.onclick=function(){
     const tab=this.dataset.tab;
-    const sec=this.closest('section,div');
+    const sec=this.parentElement.parentElement;
     sec.querySelectorAll('.tab-btn').forEach(b=>b.classList.toggle('active',b===this));
     sec.querySelectorAll('.tab-panel').forEach(p=>p.classList.toggle('active',p.id==='tab-'+tab));
   };
@@ -1287,6 +1424,167 @@ simCanvas.addEventListener('mouseup',()=>dragging=false);
 simCanvas.addEventListener('touchstart',e=>{e.preventDefault();const r=simCanvas.getBoundingClientRect();const x=e.touches[0].clientX-r.left,y=e.touches[0].clientY-r.top;if(Math.sqrt((x-simMagnet.x)**2+(y-simMagnet.y)**2)<60) dragging=true;},{passive:false});
 simCanvas.addEventListener('touchmove',e=>{e.preventDefault();if(!dragging)return;const r=simCanvas.getBoundingClientRect();simMagnet.x=Math.max(60,Math.min(SW-60,e.touches[0].clientX-r.left));simMagnet.y=Math.max(22,Math.min(SH-22,e.touches[0].clientY-r.top));},{passive:false});
 simCanvas.addEventListener('touchend',()=>dragging=false);
+
+// ─── TOC TOGGLE (hide/show) ───────────────────────────────────────────
+const tocToggle=document.querySelector('.toc-toggle');
+const tocList=document.getElementById('toc-list');
+let tocVisible=true;
+if(tocToggle&&tocList){
+  tocToggle.onclick=function(){
+    tocVisible=!tocVisible;
+    tocList.style.display=tocVisible?'':'none';
+    this.textContent=tocVisible?'hide':'show';
+  };
+}
+
+// ─── ARTICLE TABS (Article / Discussion / Edit / History) ────────────
+const artTabs=document.querySelectorAll('.art-tab');
+const artBody=document.querySelector('.article-body');
+const tabPanels=document.getElementById('article-tab-panels');
+const tabMap={0:'article',1:'discussion',2:'edit',3:'history'};
+artTabs.forEach((btn,i)=>{
+  btn.onclick=function(){
+    artTabs.forEach(b=>b.classList.remove('active'));
+    this.classList.add('active');
+    const which=tabMap[i];
+    if(which==='article'){
+      artBody.style.display='';
+      tabPanels.classList.remove('visible');
+    } else {
+      artBody.style.display='none';
+      tabPanels.classList.add('visible');
+      tabPanels.querySelectorAll('.atp-panel').forEach(p=>p.classList.remove('active'));
+      const target=document.getElementById('atp-'+which);
+      if(target) target.classList.add('active');
+    }
+  };
+});
+
+// ─── [EDIT] SECTION BUTTONS ──────────────────────────────────────────
+const editToast=document.getElementById('edit-toast');
+let toastTimer=null;
+function showToast(){
+  editToast.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>editToast.classList.remove('show'),2800);
+}
+document.querySelectorAll('.section-edit').forEach(btn=>{
+  btn.onclick=function(e){e.stopPropagation();showToast();};
+});
+
+// ─── SEARCH ──────────────────────────────────────────────────────────
+// Build searchable index from article sections
+const searchIndex=[];
+document.querySelectorAll('.article-section, #lead').forEach(sec=>{
+  const heading=sec.querySelector('h2');
+  const sectionName=heading?heading.innerText.replace(/§$/,'').trim():(sec.id==='lead'?'Introduction':'');
+  const paragraphs=sec.querySelectorAll('p,li,.acc-inner,.tl-desc,.dc-desc,.eq-desc,.tab-box p');
+  paragraphs.forEach(el=>{
+    const txt=el.innerText.trim();
+    if(txt.length>30){
+      searchIndex.push({section:sectionName,sectionId:sec.id,text:txt,el:el});
+    }
+  });
+});
+
+const searchOverlay=document.getElementById('search-overlay');
+const smInput=document.getElementById('sm-input');
+const smResults=document.getElementById('sm-results');
+const headerSearchInput=document.querySelector('.header-search input');
+
+function openSearch(){
+  searchOverlay.classList.add('open');
+  setTimeout(()=>smInput.focus(),50);
+  renderResults('');
+}
+function closeSearch(){
+  searchOverlay.classList.remove('open');
+  smInput.value='';
+  smResults.innerHTML='';
+  clearHighlights();
+  headerSearchInput.blur();
+}
+
+function escape(s){return s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function snippet(text,query,maxLen=120){
+  const idx=text.toLowerCase().indexOf(query.toLowerCase());
+  if(idx===-1) return escape(text.slice(0,maxLen))+'…';
+  const start=Math.max(0,idx-40);
+  const end=Math.min(text.length,start+maxLen);
+  const pre=escape(text.slice(start,idx));
+  const match=escape(text.slice(idx,idx+query.length));
+  const post=escape(text.slice(idx+query.length,end));
+  return (start>0?'…':'')+pre+'<mark>'+match+'</mark>'+post+(end<text.length?'…':'');
+}
+
+let currentFocus=-1;
+function renderResults(q){
+  smResults.innerHTML='';
+  currentFocus=-1;
+  if(!q.trim()){
+    smResults.innerHTML='<div class="sm-empty">Start typing to search the article…</div>';
+    return;
+  }
+  const ql=q.toLowerCase();
+  const hits=searchIndex.filter(item=>item.text.toLowerCase().includes(ql)||item.section.toLowerCase().includes(ql));
+  const seen=new Set();const deduped=[];
+  hits.forEach(h=>{if(!seen.has(h.sectionId+h.section)){seen.add(h.sectionId+h.section);}deduped.push(h);});
+  const top=deduped.slice(0,10);
+  if(!top.length){smResults.innerHTML='<div class="sm-empty">No results for "'+escape(q)+'"</div>';return;}
+  top.forEach((item,i)=>{
+    const div=document.createElement('div');div.className='sm-result';
+    div.innerHTML='<div class="sr-sec">'+escape(item.section)+'</div><div class="sr-text">'+snippet(item.text,q)+'</div>';
+    div.onclick=()=>{closeSearch();highlightAndScroll(item.sectionId,q);};
+    smResults.appendChild(div);
+  });
+}
+
+smInput.addEventListener('input',()=>renderResults(smInput.value));
+smInput.addEventListener('keydown',e=>{
+  const results=smResults.querySelectorAll('.sm-result');
+  if(e.key==='ArrowDown'){e.preventDefault();currentFocus=Math.min(currentFocus+1,results.length-1);results.forEach((r,i)=>r.classList.toggle('focused',i===currentFocus));}
+  else if(e.key==='ArrowUp'){e.preventDefault();currentFocus=Math.max(currentFocus-1,0);results.forEach((r,i)=>r.classList.toggle('focused',i===currentFocus));}
+  else if(e.key==='Enter'&&currentFocus>=0){results[currentFocus].click();}
+  else if(e.key==='Escape'){closeSearch();}
+});
+document.getElementById('sm-close').onclick=closeSearch;
+searchOverlay.addEventListener('click',e=>{if(e.target===searchOverlay)closeSearch();});
+document.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key==='k'){e.preventDefault();openSearch();}});
+
+// Wire header search input → open overlay
+if(headerSearchInput){
+  headerSearchInput.addEventListener('focus',openSearch);
+  headerSearchInput.addEventListener('input',()=>{smInput.value=headerSearchInput.value;renderResults(headerSearchInput.value);openSearch();});
+}
+
+// Highlight text in article on jump
+function clearHighlights(){
+  document.querySelectorAll('mark.fp-hl').forEach(m=>{
+    const parent=m.parentNode;
+    parent.replaceChild(document.createTextNode(m.textContent),m);
+    parent.normalize();
+  });
+}
+function highlightAndScroll(sectionId,q){
+  clearHighlights();
+  const sec=document.getElementById(sectionId);
+  if(!sec) return;
+  sec.scrollIntoView({behavior:'smooth',block:'start'});
+  if(!q) return;
+  const walk=document.createTreeWalker(sec,NodeFilter.SHOW_TEXT);
+  const nodes=[];let n;
+  while((n=walk.nextNode())) nodes.push(n);
+  const ql=q.toLowerCase();
+  nodes.forEach(node=>{
+    const idx=node.nodeValue.toLowerCase().indexOf(ql);
+    if(idx===-1) return;
+    const range=document.createRange();
+    range.setStart(node,idx);range.setEnd(node,idx+q.length);
+    const mark=document.createElement('mark');mark.className='fp-hl';
+    try { range.surroundContents(mark); } catch(e) {}
+  });
+  setTimeout(clearHighlights,3000);
+}
 </script>
 </body>
 </html>
