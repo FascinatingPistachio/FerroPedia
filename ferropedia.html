@@ -1,0 +1,1292 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Iron Filings & Ferromagnetism — FerroPedia</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Crimson+Pro:ital,wght@0,400;0,500;0,600;1,400&family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+/* ── THEME TOKENS ─────────────────────────── */
+html[data-theme="light"]{
+  --bg:#faf9f5;--bg2:#f3f1eb;--bg3:#e9e7df;
+  --text:#1c1a16;--text2:#4a4640;--text3:#78756e;--text4:#aaa89f;
+  --link:#2154a5;--border:#ccc9c0;--border2:#e6e4dc;
+  --accent:#2154a5;--accent-light:#e6edf8;
+  --gold:#b8780e;--gold-bg:#fef7e6;
+  --ib-head:#2154a5;--ib-bg:#edf4fc;--ib-alt:#f5faff;
+  --toc-bg:#f7f6f1;--code-bg:#f2f1ea;
+  --header:#fff;--header-b:#dddad0;
+  --hero-overlay:linear-gradient(to right,rgba(250,249,245,.97) 38%,rgba(250,249,245,.88) 60%,rgba(250,249,245,.45));
+  --hero-overlay2:linear-gradient(to top,rgba(250,249,245,1),transparent 42%);
+  --sim-bg:#f8f6f0;--sim-bg2:#efecea;--sim-filing:#2a2018;
+  --section-hr:#e0ddd4;
+  --tag-bg:#eae8e0;--tag-text:#4a4640;
+  --note-bg:#f0f6ff;--note-border:#9bbce8;
+}
+html[data-theme="dark"]{
+  --bg:#111009;--bg2:#181610;--bg3:#201e18;
+  --text:#e4dfd0;--text2:#b0aba0;--text3:#787268;--text4:#484440;
+  --link:#82a8f0;--border:#2c2a22;--border2:#201e18;
+  --accent:#82a8f0;--accent-light:#162040;
+  --gold:#d49840;--gold-bg:#1e1608;
+  --ib-head:#1a408a;--ib-bg:#0e1c30;--ib-alt:#101828;
+  --toc-bg:#141210;--code-bg:#181610;
+  --header:#0c0a06;--header-b:#201e16;
+  --hero-overlay:linear-gradient(to right,rgba(17,16,9,.97) 38%,rgba(17,16,9,.88) 60%,rgba(17,16,9,.45));
+  --hero-overlay2:linear-gradient(to top,rgba(17,16,9,1),transparent 42%);
+  --sim-bg:#1a1810;--sim-bg2:#141208;--sim-filing:#d4c8a8;
+  --section-hr:#282420;
+  --tag-bg:#201e18;--tag-text:#b0aba0;
+  --note-bg:#0e1c2c;--note-border:#2a4c7a;
+}
+
+/* ── BASE ─────────────────────────────────── */
+html{scroll-behavior:smooth;font-size:16px}
+body{background:var(--bg);color:var(--text);font-family:'Crimson Pro',Georgia,serif;line-height:1.75;transition:background .3s,color .3s}
+a{color:var(--link);text-decoration:none}
+a:hover{text-decoration:underline}
+img{max-width:100%}
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+
+/* ── PROGRESS BAR ─────────────────────────── */
+#progress-bar{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--gold),var(--accent));z-index:1000;width:0%;transition:width .1s linear}
+
+/* ── HEADER ───────────────────────────────── */
+#site-header{
+  position:sticky;top:0;z-index:200;
+  background:var(--header);border-bottom:1px solid var(--header-b);
+  backdrop-filter:blur(10px);
+}
+.header-inner{
+  max-width:1340px;margin:0 auto;padding:0 28px;
+  height:58px;display:flex;align-items:center;gap:20px;
+}
+.fp-logo{display:flex;align-items:center;gap:10px;text-decoration:none;flex-shrink:0}
+.fp-mark{
+  width:38px;height:38px;border-radius:8px;
+  background:var(--accent);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Cormorant Garamond',serif;font-weight:700;font-size:18px;
+  color:#fff;letter-spacing:-.5px;
+}
+.fp-wordmark{font-family:'Cormorant Garamond',serif;font-weight:700;font-size:22px;color:var(--text);letter-spacing:-.02em}
+.fp-wordmark span{color:var(--accent)}
+.header-search{
+  flex:1;max-width:440px;position:relative;
+}
+.header-search input{
+  width:100%;padding:8px 14px 8px 38px;
+  background:var(--bg2);border:1px solid var(--border);border-radius:20px;
+  font-family:'Crimson Pro',serif;font-size:15px;color:var(--text);
+  outline:none;transition:border-color .2s,background .2s;
+}
+.header-search input:focus{border-color:var(--accent);background:var(--bg)}
+.header-search input::placeholder{color:var(--text4)}
+.search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--text4);font-size:14px;pointer-events:none}
+.header-nav{display:flex;align-items:center;gap:6px;margin-left:auto}
+.header-nav a{
+  font-family:'Outfit',sans-serif;font-size:13px;font-weight:500;
+  color:var(--text3);padding:6px 12px;border-radius:6px;
+  transition:color .2s,background .2s;
+}
+.header-nav a:hover{color:var(--text);background:var(--bg2);text-decoration:none}
+#theme-toggle{
+  width:36px;height:36px;border-radius:8px;border:1px solid var(--border);
+  background:var(--bg2);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  font-size:16px;transition:all .2s;color:var(--text2);
+}
+#theme-toggle:hover{border-color:var(--accent);color:var(--accent)}
+
+/* ── ARTICLE HEADER ───────────────────────── */
+.article-topbar{
+  max-width:1340px;margin:0 auto;padding:10px 28px;
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;
+}
+.breadcrumb{font-family:'Outfit',sans-serif;font-size:12px;color:var(--text4);display:flex;align-items:center;gap:6px}
+.breadcrumb a{color:var(--link);text-decoration:none}
+.breadcrumb a:hover{text-decoration:underline}
+.breadcrumb .sep{color:var(--text4)}
+.article-tabs{display:flex;gap:2px}
+.art-tab{
+  font-family:'Outfit',sans-serif;font-size:12px;font-weight:500;
+  padding:5px 14px;border-radius:6px 6px 0 0;border:1px solid transparent;
+  color:var(--text3);cursor:pointer;background:none;
+  transition:all .2s;
+}
+.art-tab.active{
+  background:var(--bg);border-color:var(--border);border-bottom-color:var(--bg);
+  color:var(--text);position:relative;top:1px;
+}
+.article-meta-bar{
+  background:var(--bg2);border-bottom:1px solid var(--border2);
+  font-family:'Outfit',sans-serif;font-size:12px;color:var(--text4);
+}
+.article-meta-inner{
+  max-width:1340px;margin:0 auto;padding:7px 28px;
+  display:flex;align-items:center;gap:24px;flex-wrap:wrap;
+}
+.meta-item{display:flex;align-items:center;gap:5px}
+.meta-item .dot{width:4px;height:4px;border-radius:50%;background:var(--border);margin-right:2px}
+
+/* ── HERO ─────────────────────────────────── */
+.article-hero{
+  position:relative;height:520px;overflow:hidden;
+}
+.article-hero img{width:100%;height:100%;object-fit:cover;object-position:center 40%}
+.article-hero .ho1{position:absolute;inset:0;background:var(--hero-overlay)}
+.article-hero .ho2{position:absolute;inset:0;background:var(--hero-overlay2)}
+.hero-text{
+  position:absolute;bottom:0;left:0;right:0;
+  max-width:1340px;margin:0 auto;padding:0 28px 44px;
+}
+.hero-tag{
+  display:inline-flex;align-items:center;gap:6px;
+  background:var(--accent);color:#fff;
+  font-family:'Outfit',sans-serif;font-size:11px;font-weight:600;
+  padding:4px 12px;border-radius:20px;letter-spacing:.05em;
+  text-transform:uppercase;margin-bottom:14px;
+}
+.hero-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(36px,6vw,72px);font-weight:700;
+  line-height:1.08;letter-spacing:-.02em;margin-bottom:10px;
+  color:var(--text);
+}
+.hero-title em{font-style:italic;color:var(--accent)}
+.hero-subtitle{
+  font-family:'Outfit',sans-serif;font-size:15px;
+  color:var(--text3);max-width:540px;line-height:1.55;
+}
+
+/* ── ARTICLE LAYOUT ───────────────────────── */
+.article-body{
+  max-width:1340px;margin:0 auto;padding:36px 28px;
+  display:grid;grid-template-columns:234px 1fr;gap:48px;align-items:start;
+}
+@media(max-width:900px){.article-body{grid-template-columns:1fr;gap:0}}
+
+/* ── TOC ──────────────────────────────────── */
+.toc-sidebar{
+  position:sticky;top:74px;
+  background:var(--toc-bg);border:1px solid var(--border);border-radius:10px;
+  overflow:hidden;
+}
+.toc-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 16px;border-bottom:1px solid var(--border2);
+  font-family:'Outfit',sans-serif;font-size:12px;font-weight:600;
+  color:var(--text2);letter-spacing:.05em;text-transform:uppercase;
+}
+.toc-toggle{background:none;border:none;cursor:pointer;color:var(--text4);font-size:11px;font-family:'Outfit',sans-serif}
+.toc-list{padding:10px 0;max-height:calc(100vh - 200px);overflow-y:auto}
+.toc-item{display:block;padding:0}
+.toc-link{
+  display:flex;align-items:center;gap:0;
+  padding:5px 16px;font-family:'Outfit',sans-serif;font-size:13px;
+  color:var(--text3);transition:all .2s;border-left:2px solid transparent;
+  text-decoration:none;line-height:1.4;
+}
+.toc-link:hover{color:var(--text);background:var(--bg3);text-decoration:none}
+.toc-link.active{color:var(--accent);border-left-color:var(--accent);background:var(--accent-light);font-weight:500}
+.toc-num{
+  font-family:'JetBrains Mono',monospace;font-size:10px;
+  color:var(--text4);min-width:22px;flex-shrink:0;
+}
+.toc-link.active .toc-num{color:var(--accent)}
+.toc-stats{
+  border-top:1px solid var(--border2);padding:10px 16px;
+  font-family:'Outfit',sans-serif;font-size:11px;color:var(--text4);
+  display:flex;flex-direction:column;gap:4px;
+}
+@media(max-width:900px){
+  .toc-sidebar{position:relative;top:0;margin-bottom:32px}
+  .toc-list{max-height:none}
+}
+
+/* ── ARTICLE CONTENT ──────────────────────── */
+.article-content{}
+.article-lead{
+  font-size:18px;line-height:1.78;color:var(--text2);margin-bottom:28px;
+  padding-bottom:28px;border-bottom:1px solid var(--border2);
+}
+.article-lead strong{color:var(--text);font-weight:600}
+.article-lead .first-word{font-size:44px;font-family:'Cormorant Garamond',serif;font-weight:700;float:left;line-height:.85;margin:4px 7px 0 0;color:var(--text)}
+
+/* ── INFOBOX ──────────────────────────────── */
+.infobox{
+  float:right;clear:right;
+  width:280px;margin:0 0 20px 28px;
+  border:1px solid var(--border);border-radius:10px;overflow:hidden;
+  font-size:13px;
+}
+@media(max-width:720px){.infobox{float:none;width:100%;margin:0 0 24px 0}}
+.ib-title{
+  background:var(--ib-head);color:#fff;
+  padding:12px 16px;text-align:center;
+  font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:600;
+}
+.ib-img{border-bottom:1px solid var(--border2);background:var(--ib-bg);padding:16px;text-align:center}
+.ib-img img{max-height:150px;border-radius:6px}
+.ib-img .ib-img-cap{font-size:11px;color:var(--text4);font-family:'Outfit',sans-serif;margin-top:6px;font-style:italic}
+.ib-section-head{
+  background:var(--ib-head);color:#fff;
+  padding:5px 14px;font-family:'Outfit',sans-serif;font-size:10px;
+  font-weight:600;letter-spacing:.06em;text-transform:uppercase;
+}
+.ib-row{
+  display:flex;padding:6px 14px;border-bottom:1px solid var(--border2);
+  background:var(--ib-bg);
+}
+.ib-row:nth-child(even){background:var(--ib-alt)}
+.ib-row:last-child{border-bottom:none}
+.ib-label{color:var(--text3);font-family:'Outfit',sans-serif;font-size:12px;min-width:110px;flex-shrink:0;line-height:1.5}
+.ib-val{font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--text);line-height:1.5}
+
+/* ── SECTION STRUCTURE ────────────────────── */
+.article-section{margin-bottom:44px;padding-bottom:0}
+.section-heading{
+  display:flex;align-items:baseline;gap:0;
+  border-bottom:1px solid var(--section-hr);
+  padding-bottom:8px;margin-bottom:20px;
+}
+.section-num{
+  font-family:'JetBrains Mono',monospace;font-size:13px;
+  color:var(--text4);margin-right:12px;flex-shrink:0;
+}
+.section-heading h2{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(22px,3.5vw,32px);font-weight:600;
+  color:var(--text);letter-spacing:-.01em;flex:1;
+}
+.section-edit{
+  font-family:'Outfit',sans-serif;font-size:11px;color:var(--text4);
+  border:1px solid var(--border2);border-radius:4px;padding:2px 8px;
+  margin-left:12px;flex-shrink:0;cursor:pointer;transition:all .2s;
+  background:none;
+}
+.section-edit:hover{border-color:var(--accent);color:var(--accent)}
+.section-anchor{color:var(--text4);text-decoration:none;font-size:14px;margin-left:6px;opacity:0;transition:opacity .2s}
+.section-heading:hover .section-anchor{opacity:1}
+
+p{margin-bottom:16px;font-size:17px;color:var(--text2);line-height:1.78}
+strong{color:var(--text);font-weight:600}
+
+/* ── 2-COL WITHIN CONTENT ─────────────────── */
+.c2{display:grid;grid-template-columns:1fr 1fr;gap:32px;margin-bottom:24px}
+.c2.w6-4{grid-template-columns:6fr 4fr}
+.c2.w4-6{grid-template-columns:4fr 6fr}
+@media(max-width:680px){.c2,.c2.w6-4,.c2.w4-6{grid-template-columns:1fr}}
+
+/* ── FIGURE ───────────────────────────────── */
+figure{margin:0 0 20px 0}
+figure img{
+  width:100%;display:block;border:1px solid var(--border);border-radius:8px;
+  transition:filter .4s;
+}
+[data-theme="light"] figure img{filter:none}
+[data-theme="dark"] figure img{filter:brightness(.92) saturate(.85)}
+[data-theme="dark"] figure:hover img{filter:brightness(1) saturate(1)}
+figcaption{
+  font-family:'Outfit',sans-serif;font-size:12px;color:var(--text4);
+  padding:7px 12px;border:1px solid var(--border);border-top:none;
+  border-radius:0 0 8px 8px;background:var(--bg2);line-height:1.5;
+}
+figcaption strong{color:var(--text3);font-weight:600}
+
+/* ── INFO CALLOUT ─────────────────────────── */
+.callout{
+  background:var(--note-bg);border-left:3px solid var(--accent);
+  border-radius:0 8px 8px 0;padding:14px 18px;margin:20px 0;
+}
+.callout.gold{background:var(--gold-bg);border-left-color:var(--gold)}
+.callout p{margin:0;font-size:14.5px;color:var(--text2)}
+.callout strong{color:var(--accent)}
+.callout.gold strong{color:var(--gold)}
+
+/* ── DATA TABLE ───────────────────────────── */
+.data-table-wrap{
+  border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:24px;
+}
+.dt-head{
+  background:var(--ib-head);color:#fff;
+  padding:10px 18px;font-family:'Outfit',sans-serif;font-size:11px;
+  font-weight:600;text-transform:uppercase;letter-spacing:.08em;
+}
+.dt{width:100%;border-collapse:collapse;font-size:13.5px}
+.dt th{
+  text-align:left;padding:8px 18px;font-family:'Outfit',sans-serif;font-size:11px;
+  text-transform:uppercase;letter-spacing:.08em;color:var(--text4);
+  background:var(--bg2);border-bottom:1px solid var(--border2);
+}
+.dt td{padding:8px 18px;border-bottom:1px solid var(--border2);color:var(--text2)}
+.dt tr:last-child td{border-bottom:none}
+.dt tr:hover td{background:var(--accent-light)}
+.dt .vl{font-family:'JetBrains Mono',monospace;color:var(--accent);font-size:13px}
+.dt .un{font-family:'JetBrains Mono',monospace;color:var(--text4);font-size:12px}
+@media(max-width:680px){.dt .un,.dt .sig{display:none}}
+
+/* ── DATA CARDS ───────────────────────────── */
+.d-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px}
+@media(max-width:800px){.d-cards{grid-template-columns:1fr 1fr}}
+.d-card{
+  border:1px solid var(--border);border-radius:10px;padding:16px;
+  background:var(--bg2);transition:border-color .3s;
+}
+.d-card:hover{border-color:var(--accent)}
+.d-card .dc-lbl{
+  font-family:'Outfit',sans-serif;font-size:10px;text-transform:uppercase;
+  letter-spacing:.1em;color:var(--text4);margin-bottom:8px;
+}
+.d-card .dc-val{
+  font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:700;
+  color:var(--accent);display:flex;align-items:baseline;gap:5px;line-height:1;margin-bottom:6px;
+}
+.d-card .dc-val .un{font-size:13px;font-family:'Outfit',sans-serif;font-weight:400;color:var(--text3)}
+.d-card .dc-desc{font-size:12.5px;color:var(--text4);line-height:1.5;font-family:'Outfit',sans-serif}
+.d-card.gold .dc-val{color:var(--gold)}
+.d-card.gold:hover{border-color:var(--gold)}
+
+/* ── EQUATION ─────────────────────────────── */
+.eq-block{
+  background:var(--bg2);border:1px solid var(--border);border-radius:10px;
+  overflow:hidden;margin-bottom:20px;
+}
+.eq-name{
+  padding:8px 16px;background:var(--bg3);border-bottom:1px solid var(--border2);
+  font-family:'Outfit',sans-serif;font-size:11px;font-weight:600;
+  text-transform:uppercase;letter-spacing:.07em;color:var(--text3);
+  display:flex;align-items:center;gap:8px;
+}
+.eq-name::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--accent);flex-shrink:0}
+.eq-formula{
+  padding:18px;text-align:center;
+  font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:500;
+  letter-spacing:.03em;color:var(--text);line-height:1.6;
+}
+.eq-desc{padding:0 16px 14px;font-size:13.5px;color:var(--text3);line-height:1.6;font-family:'Outfit',sans-serif}
+.eq-vars{padding:12px 16px;border-top:1px solid var(--border2);display:grid;grid-template-columns:1fr 1fr;gap:5px 16px}
+.eq-var{display:flex;gap:7px;font-size:12px;font-family:'Outfit',sans-serif;align-items:flex-start}
+.eq-var .s{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent);font-weight:500;flex-shrink:0}
+.eq-var .m{color:var(--text4);line-height:1.4}
+
+/* ── ACCORDION ────────────────────────────── */
+.accordion{border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:24px}
+.acc-item+.acc-item{border-top:1px solid var(--border2)}
+.acc-trigger{
+  width:100%;padding:14px 18px;display:flex;justify-content:space-between;align-items:center;
+  background:none;border:none;color:var(--text);font-family:'Crimson Pro',serif;
+  font-size:16.5px;cursor:pointer;text-align:left;gap:12px;transition:color .2s;
+}
+.acc-trigger:hover{color:var(--accent)}
+.acc-arrow{
+  width:20px;height:20px;border-radius:50%;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  background:var(--bg2);border:1px solid var(--border);
+  font-size:10px;transition:transform .3s,background .2s;color:var(--text3);
+}
+.acc-trigger[aria-expanded="true"] .acc-arrow{transform:rotate(180deg);background:var(--accent-light);border-color:var(--accent);color:var(--accent)}
+.acc-content{max-height:0;overflow:hidden;transition:max-height .38s ease}
+.acc-content.open{max-height:500px}
+.acc-inner{padding:0 18px 16px;font-size:15.5px;color:var(--text3);line-height:1.75;background:var(--toc-bg);border-top:1px solid var(--border2)}
+
+/* ── TABS ─────────────────────────────────── */
+.tabs-bar{
+  display:flex;border-bottom:2px solid var(--border2);margin-bottom:20px;gap:0;
+  overflow-x:auto;
+}
+.tab-btn{
+  padding:10px 20px;background:none;border:none;border-bottom:2px solid transparent;
+  font-family:'Outfit',sans-serif;font-size:13px;font-weight:500;color:var(--text4);
+  cursor:pointer;transition:all .2s;margin-bottom:-2px;white-space:nowrap;
+}
+.tab-btn:hover{color:var(--text)}
+.tab-btn.active{color:var(--accent);border-bottom-color:var(--accent)}
+.tab-panel{display:none}
+.tab-panel.active{display:block}
+.tab-box{
+  background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:20px;
+}
+.tab-box h4{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;margin-bottom:10px;color:var(--text)}
+.tab-box p{font-size:15px;color:var(--text3);margin-bottom:12px;line-height:1.7}
+.tab-formula{
+  font-family:'JetBrains Mono',monospace;font-size:12px;
+  color:var(--accent);background:var(--accent-light);padding:8px 12px;border-radius:6px;
+}
+.field-props{background:var(--gold-bg);border:1px solid var(--border);border-radius:10px;padding:18px;margin-top:16px}
+.field-props h4{font-family:'Outfit',sans-serif;font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--gold);margin-bottom:12px;font-weight:600}
+.field-props li{list-style:none;font-size:14px;color:var(--text3);padding:5px 0;display:flex;gap:9px;line-height:1.5}
+.field-props li::before{content:'→';color:var(--gold);flex-shrink:0}
+
+/* ── TIMELINE ─────────────────────────────── */
+.timeline{position:relative}
+.tl-item{position:relative;padding-left:40px;padding-bottom:24px}
+.tl-item:last-child{padding-bottom:0}
+.tl-item::before{content:'';position:absolute;left:10px;top:14px;bottom:0;width:1px;background:linear-gradient(to bottom,var(--border),transparent)}
+.tl-item:last-child::before{display:none}
+.tl-dot{position:absolute;left:4px;top:8px;width:14px;height:14px;border-radius:50%;background:var(--bg);border:2px solid var(--accent);display:flex;align-items:center;justify-content:center}
+.tl-dot::after{content:'';width:5px;height:5px;border-radius:50%;background:var(--accent)}
+.tl-card{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:14px 16px;transition:border-color .2s}
+.tl-card:hover{border-color:var(--accent)}
+.tl-yr{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent);font-weight:500;margin-bottom:4px}
+.tl-title{font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:600;margin-bottom:6px;color:var(--text)}
+.tl-desc{font-size:13.5px;color:var(--text3);line-height:1.65;font-family:'Outfit',sans-serif}
+
+/* ── TYPES GRID ───────────────────────────── */
+.type-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px}
+@media(max-width:800px){.type-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:520px){.type-grid{grid-template-columns:1fr}}
+.type-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:18px;transition:all .2s}
+.type-card:hover{border-color:var(--accent);background:var(--bg3)}
+.tc-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;gap:8px}
+.tc-head h4{font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:600}
+.tc-badge{font-family:'Outfit',sans-serif;font-size:10px;padding:3px 8px;border-radius:12px;background:var(--bg3);color:var(--text4);flex-shrink:0;white-space:nowrap}
+.type-card p{font-size:13px;color:var(--text3);line-height:1.6;font-family:'Outfit',sans-serif;margin:0}
+
+/* ── APPS GRID ────────────────────────────── */
+.apps-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+@media(max-width:800px){.apps-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:520px){.apps-grid{grid-template-columns:1fr}}
+.app-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:20px;transition:all .2s}
+.app-card:hover{border-color:var(--accent)}
+.app-icon{
+  width:38px;height:38px;border-radius:8px;
+  background:var(--accent-light);color:var(--accent);
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;margin-bottom:14px;transition:background .2s;
+}
+.app-card:hover .app-icon{background:var(--accent);color:#fff}
+.app-card h4{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:600;margin-bottom:6px;color:var(--text)}
+.app-card p{font-size:13px;color:var(--text3);line-height:1.6;font-family:'Outfit',sans-serif;margin:0}
+
+/* ── SIMULATOR ────────────────────────────── */
+.sim-wrap{border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:20px}
+.sim-head{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:10px 16px;background:var(--bg2);border-bottom:1px solid var(--border2);
+}
+.sim-head-l{display:flex;align-items:center;gap:8px;font-family:'Outfit',sans-serif;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--text3)}
+.sim-live{width:7px;height:7px;border-radius:50%;background:#22c55e;animation:blink 1.8s ease-in-out infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.sim-head-r{font-family:'Outfit',sans-serif;font-size:11px;color:var(--text4)}
+#sim-canvas{width:100%;height:440px;display:block;cursor:grab;touch-action:none}
+#sim-canvas:active{cursor:grabbing}
+.sim-notes{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:0}
+@media(max-width:640px){.sim-notes{grid-template-columns:1fr}}
+.sim-note{background:var(--bg2);border:1px solid var(--border2);border-radius:8px;padding:12px 14px;text-align:center}
+.sim-note .sn-l{font-family:'Outfit',sans-serif;font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--accent);font-weight:700;margin-bottom:4px}
+.sim-note p{font-size:12px;color:var(--text4);font-family:'Outfit',sans-serif;margin:0}
+
+/* ── REFERENCES ───────────────────────────── */
+.ref-list{list-style:none;counter-reset:refs}
+.ref-item{
+  counter-increment:refs;display:flex;gap:10px;padding:6px 0;
+  font-size:13.5px;color:var(--text3);border-bottom:1px solid var(--border2);
+  font-family:'Outfit',sans-serif;
+}
+.ref-item:last-child{border-bottom:none}
+.ref-item::before{content:counter(refs) ".";font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text4);min-width:22px;flex-shrink:0;margin-top:2px}
+.ref-title{color:var(--link);font-style:italic}
+.ref-author{font-weight:500;color:var(--text)}
+
+/* ── CATEGORIES ───────────────────────────── */
+.categories{
+  display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap;
+  padding:16px 0;border-top:1px solid var(--border);font-family:'Outfit',sans-serif;font-size:13px;
+}
+.cat-label{color:var(--text4);font-weight:600;flex-shrink:0}
+.cat-tags{display:flex;flex-wrap:wrap;gap:6px}
+.cat-tag{
+  padding:4px 12px;background:var(--tag-bg);color:var(--link);
+  border-radius:4px;font-size:12px;text-decoration:none;border:1px solid var(--border2);
+  transition:all .2s;
+}
+.cat-tag:hover{border-color:var(--accent);background:var(--accent-light);text-decoration:none}
+
+/* ── FOOTER ───────────────────────────────── */
+footer{
+  background:var(--bg2);border-top:1px solid var(--border);
+  padding:48px 0 32px;margin-top:48px;
+}
+.footer-inner{max-width:1340px;margin:0 auto;padding:0 28px}
+.footer-grid{display:grid;grid-template-columns:1.6fr 1fr 1fr;gap:40px;margin-bottom:36px}
+@media(max-width:760px){.footer-grid{grid-template-columns:1fr}}
+.footer-brand .logo{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:700;color:var(--text);margin-bottom:8px}
+.footer-brand .logo span{color:var(--accent)}
+.footer-brand p{font-size:13px;color:var(--text3);line-height:1.6;font-family:'Outfit',sans-serif}
+.footer-col h4{font-family:'Outfit',sans-serif;font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--accent);font-weight:700;margin-bottom:12px}
+.footer-col ul{list-style:none}
+.footer-col li{font-family:'Outfit',sans-serif;font-size:13px;color:var(--text3);padding:4px 0}
+.footer-col li a{color:var(--link)}
+.footer-consts{font-family:'JetBrains Mono',monospace;font-size:12px}
+.footer-const{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border2)}
+.footer-const:last-child{border-bottom:none}
+.footer-const .c{color:var(--text3)}
+.footer-const .v{color:var(--text)}
+.footer-bottom{
+  border-top:1px solid var(--border2);padding-top:20px;
+  display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;
+  font-family:'Outfit',sans-serif;font-size:12px;color:var(--text4);
+}
+.last-edit{display:flex;align-items:center;gap:6px}
+.license-badge{
+  display:inline-flex;align-items:center;gap:6px;padding:4px 10px;
+  border:1px solid var(--border);border-radius:4px;font-size:11px;color:var(--text4);
+}
+
+/* ── FADE-IN ───────────────────────────────── */
+.fade{opacity:0;transform:translateY(20px);transition:opacity .6s ease,transform .6s ease}
+.fade.in{opacity:1;transform:translateY(0)}
+
+/* ── MOBILE FIXES ──────────────────────────── */
+@media(max-width:680px){
+  .header-nav a:not(#theme-btn){display:none}
+  .article-hero{height:400px}
+  .hero-title{font-size:36px}
+}
+</style>
+</head>
+<body>
+
+<div id="progress-bar"></div>
+
+<!-- ═══ HEADER ═══════════════════════════════ -->
+<header id="site-header">
+  <div class="header-inner">
+    <a class="fp-logo" href="#">
+      <div class="fp-mark">Fp</div>
+      <div class="fp-wordmark">Ferro<span>Pedia</span></div>
+    </a>
+    <div class="header-search">
+      <span class="search-icon">⌕</span>
+      <input type="text" placeholder="Search FerroPedia…">
+    </div>
+    <nav class="header-nav">
+      <a href="#">Explore</a>
+      <a href="#">Topics</a>
+      <a href="#">About</a>
+      <button id="theme-toggle" title="Toggle dark mode">☀</button>
+    </nav>
+  </div>
+</header>
+
+<!-- ═══ ARTICLE TOPBAR ═══════════════════════ -->
+<div style="background:var(--bg2);border-bottom:1px solid var(--border2)">
+  <div class="article-topbar">
+    <div class="breadcrumb">
+      <a href="#">FerroPedia</a><span class="sep">›</span>
+      <a href="#">Physics</a><span class="sep">›</span>
+      <a href="#">Electromagnetism</a><span class="sep">›</span>
+      <a href="#">Ferromagnetism</a><span class="sep">›</span>
+      <span>Iron Filings</span>
+    </div>
+    <div class="article-tabs">
+      <button class="art-tab active">Article</button>
+      <button class="art-tab">Discussion</button>
+      <button class="art-tab">Edit</button>
+      <button class="art-tab">History</button>
+    </div>
+  </div>
+</div>
+<div class="article-meta-bar">
+  <div class="article-meta-inner">
+    <span class="meta-item"><span class="dot"></span>8,200 words</span>
+    <span class="meta-item"><span class="dot"></span>12 min read</span>
+    <span class="meta-item"><span class="dot"></span>10 sections</span>
+    <span class="meta-item"><span class="dot"></span>Peer-reviewed sources</span>
+    <span class="meta-item" style="margin-left:auto">Last edited: <strong>April 13, 2026</strong></span>
+  </div>
+</div>
+
+<!-- ═══ HERO ══════════════════════════════════ -->
+<div class="article-hero">
+  <img src="https://d2xsxph8kpxj0f.cloudfront.net/310519663549993894/3QcNsbFrsVoSAVqVnd7zpx/hero_iron_filings_c2b9d466.png" alt="Iron filings forming patterns around a bar magnet">
+  <div class="ho1"></div>
+  <div class="ho2"></div>
+  <div class="hero-text">
+    <div class="hero-tag">Featured Article</div>
+    <h1 class="hero-title">Iron Filings &<br><em>Ferromagnetism</em></h1>
+    <p class="hero-subtitle">From FerroPedia, the free encyclopedia of magnetism and materials science</p>
+  </div>
+</div>
+
+<!-- ═══ ARTICLE BODY ══════════════════════════ -->
+<div class="article-body">
+
+  <!-- TOC SIDEBAR -->
+  <aside class="toc-sidebar">
+    <div class="toc-header">
+      Contents
+      <button class="toc-toggle">hide</button>
+    </div>
+    <nav class="toc-list" id="toc-list">
+      <a class="toc-link" href="#lead" data-sec="lead"><span class="toc-num">0</span>Lead</a>
+      <a class="toc-link" href="#fundamentals" data-sec="fundamentals"><span class="toc-num">1</span>Fundamentals</a>
+      <a class="toc-link" href="#domain-theory" data-sec="domain-theory"><span class="toc-num">2</span>Domain Theory</a>
+      <a class="toc-link" href="#field-lines" data-sec="field-lines"><span class="toc-num">3</span>Field Lines</a>
+      <a class="toc-link" href="#hysteresis" data-sec="hysteresis"><span class="toc-num">4</span>Hysteresis</a>
+      <a class="toc-link" href="#simulator" data-sec="simulator"><span class="toc-num">5</span>Interactive Simulator</a>
+      <a class="toc-link" href="#properties" data-sec="properties"><span class="toc-num">6</span>Physical Properties</a>
+      <a class="toc-link" href="#types" data-sec="types"><span class="toc-num">7</span>Types of Magnetism</a>
+      <a class="toc-link" href="#history" data-sec="history"><span class="toc-num">8</span>Historical Journey</a>
+      <a class="toc-link" href="#applications" data-sec="applications"><span class="toc-num">9</span>Applications</a>
+      <a class="toc-link" href="#references" data-sec="references"><span class="toc-num">10</span>References</a>
+    </nav>
+    <div class="toc-stats">
+      <span>⚗ Iron · Element 26 · Fe</span>
+      <span>🧲 Curie Temp: 1043 K</span>
+      <span>📐 Ferromagnetic · BCC</span>
+    </div>
+  </aside>
+
+  <!-- ARTICLE CONTENT -->
+  <main class="article-content" id="article-main">
+
+    <!-- INFOBOX -->
+    <div class="infobox">
+      <div class="ib-title">Iron (Fe) — Ferromagnetic Properties</div>
+      <div class="ib-img">
+        <img src="https://d2xsxph8kpxj0f.cloudfront.net/310519663549993894/3QcNsbFrsVoSAVqVnd7zpx/crystal_structure_669d901d.png" alt="BCC crystal structure of α-iron">
+        <div class="ib-img-cap">BCC crystal structure of α-iron with aligned magnetic moments</div>
+      </div>
+      <div class="ib-section-head">Atomic Data</div>
+      <div class="ib-row"><span class="ib-label">Symbol</span><span class="ib-val">Fe</span></div>
+      <div class="ib-row"><span class="ib-label">Atomic Number</span><span class="ib-val">26</span></div>
+      <div class="ib-row"><span class="ib-label">Atomic Mass</span><span class="ib-val">55.845 u</span></div>
+      <div class="ib-row"><span class="ib-label">Electron Config</span><span class="ib-val">[Ar] 3d⁶ 4s²</span></div>
+      <div class="ib-row"><span class="ib-label">Unpaired e⁻</span><span class="ib-val">4</span></div>
+      <div class="ib-section-head">Crystal Structure</div>
+      <div class="ib-row"><span class="ib-label">Structure</span><span class="ib-val">BCC (α-Fe)</span></div>
+      <div class="ib-row"><span class="ib-label">Lattice param.</span><span class="ib-val">2.87 Å</span></div>
+      <div class="ib-row"><span class="ib-label">Density</span><span class="ib-val">7.874 g/cm³</span></div>
+      <div class="ib-section-head">Magnetic Properties</div>
+      <div class="ib-row"><span class="ib-label">Classification</span><span class="ib-val">Ferromagnetic</span></div>
+      <div class="ib-row"><span class="ib-label">Curie Temp.</span><span class="ib-val">1043 K (770°C)</span></div>
+      <div class="ib-row"><span class="ib-label">Saturation (Bs)</span><span class="ib-val">~1.71 T</span></div>
+      <div class="ib-row"><span class="ib-label">Coercivity (Hc)</span><span class="ib-val">~80 A/m</span></div>
+      <div class="ib-row"><span class="ib-label">Permeability (μᵣ)</span><span class="ib-val">~5,000</span></div>
+      <div class="ib-row"><span class="ib-label">Mag. moment</span><span class="ib-val">2.22 μB/atom</span></div>
+    </div>
+
+    <!-- LEAD -->
+    <section id="lead">
+      <div class="article-lead">
+        <span class="first-word">I</span><strong>ron filings</strong> are fine particles of metallic iron (chemical symbol <strong>Fe</strong>, atomic number 26) produced by filing, grinding, or machining larger iron objects. Each particle — typically 0.1 to 2 mm in size — is a tiny piece of ferromagnetic material capable of being strongly magnetized by an external field. When scattered near a permanent magnet, iron filings become individually magnetized through <strong>magnetic induction</strong>, then physically align along the local field direction, forming the sweeping, curved patterns that have made them indispensable tools for visualizing magnetic fields since <a href="#history">Michael Faraday's experiments in 1851</a>. <sup style="font-size:11px;color:var(--link)">[1]</sup>
+        <br><br>
+        The behavior of iron filings is governed by <strong>ferromagnetism</strong>, one of the strongest forms of magnetic ordering found in nature. Iron's ferromagnetic properties arise from its partially filled 3d electron shell, which leaves four unpaired electrons per atom. The collective quantum mechanical alignment of these electron spins — described by <strong>Weiss domain theory</strong> (1907) and the <strong>Heisenberg exchange interaction</strong> (1928) — gives iron its remarkable ability to concentrate, channel, and respond to magnetic fields. <sup style="font-size:11px;color:var(--link)">[2]</sup>
+      </div>
+    </section>
+
+    <!-- 1 · FUNDAMENTALS -->
+    <section class="article-section" id="fundamentals">
+      <div class="section-heading">
+        <span class="section-num">1</span>
+        <h2>What Are Iron Filings?<a class="section-anchor" href="#fundamentals" title="Link to section">§</a></h2>
+        <button class="section-edit">[edit]</button>
+      </div>
+      <div class="c2 w6-4">
+        <div>
+          <p>Iron filings are very small pieces of metallic iron that appear as a dark-grey powder. They are produced through filing, grinding, or shaving larger iron objects. Each individual filing is a tiny piece of ferromagnetic material. When placed near a magnet, each iron filing becomes a miniature bar magnet through a process called <strong>magnetic induction</strong>. The external magnetic field causes the magnetic domains within each particle to align, creating a north and south pole.</p>
+          <p>The south pole of each filing then attracts the north pole of its neighboring filings, forming chains that trace the direction of the magnetic field. This chain-formation mechanism creates the beautiful, sweeping patterns visible when iron filings are sprinkled around a magnet. The density of filings corresponds to local field strength — areas of concentrated filings indicate stronger magnetic fields.</p>
+          <div class="callout">
+            <p><strong>Key Composition:</strong> Element Fe · Atomic Number 26 · Atomic Mass 55.845 u · Crystal Structure BCC (α-Fe) · Electron Configuration [Ar] 3d⁶ 4s² · 4 unpaired electrons</p>
+          </div>
+        </div>
+        <div>
+          <figure>
+            <img src="https://d2xsxph8kpxj0f.cloudfront.net/310519663549993894/3QcNsbFrsVoSAVqVnd7zpx/crystal_structure_669d901d.png" alt="BCC crystal structure of iron">
+            <figcaption><strong>Fig. 1</strong> — BCC crystal structure of α-iron with aligned magnetic moments (arrows). Lattice parameter a = 2.87 Å.</figcaption>
+          </figure>
+          <div class="d-cards" style="grid-template-columns:1fr 1fr">
+            <div class="d-card fade">
+              <div class="dc-lbl">Lattice Parameter</div>
+              <div class="dc-val">2.87<span class="un">Å</span></div>
+              <div class="dc-desc">BCC unit cell edge length at room temperature</div>
+            </div>
+            <div class="d-card gold fade">
+              <div class="dc-lbl">Density</div>
+              <div class="dc-val">7.874<span class="un">g/cm³</span></div>
+              <div class="dc-desc">At 293 K (20°C)</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2 · DOMAIN THEORY -->
+    <section class="article-section" id="domain-theory">
+      <div class="section-heading">
+        <span class="section-num">2</span>
+        <h2>Magnetic Domain Theory<a class="section-anchor" href="#domain-theory">§</a></h2>
+        <button class="section-edit">[edit]</button>
+      </div>
+      <p>Developed by <strong>Pierre-Ernest Weiss</strong> in 1906–1907, domain theory explains how ferromagnetic materials like iron organize their atomic magnetic moments into distinct regions, and how these regions respond to external magnetic fields. <sup style="font-size:11px;color:var(--link)">[3]</sup></p>
+      <div class="c2 w6-4">
+        <figure>
+          <img src="https://d2xsxph8kpxj0f.cloudfront.net/310519663549993894/3QcNsbFrsVoSAVqVnd7zpx/domain_theory_7a6ee3b3.png" alt="Magnetic domain theory in iron">
+          <figcaption><strong>Fig. 2</strong> — Magnetic domains in iron: unmagnetized state (left) with randomly oriented domains vs. magnetized state (right) with aligned domains under external field H.</figcaption>
+        </figure>
+        <div>
+          <div class="accordion">
+            <div class="acc-item">
+              <button class="acc-trigger" aria-expanded="true">What are magnetic domains?<span class="acc-arrow">▾</span></button>
+              <div class="acc-content open"><div class="acc-inner">Magnetic domains are microscopic regions within a ferromagnetic material where all atomic magnetic moments are aligned in the same direction. A typical domain in iron may contain 10¹² to 10¹⁸ atoms. In the unmagnetized state, these domains are oriented randomly, so their magnetic fields cancel out, producing no net magnetization.</div></div>
+            </div>
+            <div class="acc-item">
+              <button class="acc-trigger" aria-expanded="false">Domain walls (Bloch walls)<span class="acc-arrow">▾</span></button>
+              <div class="acc-content"><div class="acc-inner">The boundaries between adjacent domains are called domain walls or Bloch walls. Within these walls (typically 100–1000 atoms thick), the magnetic moment direction gradually rotates. The energy stored in domain walls is a balance between exchange energy (favoring parallel alignment) and magnetocrystalline anisotropy energy (favoring alignment along crystal axes).</div></div>
+            </div>
+            <div class="acc-item">
+              <button class="acc-trigger" aria-expanded="false">The magnetization process<span class="acc-arrow">▾</span></button>
+              <div class="acc-content"><div class="acc-inner">Magnetization occurs in two stages: (1) <em>Domain wall motion</em> — walls move so that domains aligned with the field grow at the expense of unfavorably oriented domains. (2) <em>Domain rotation</em> — at higher fields, the magnetic moments within remaining domains rotate to align with the applied field. At saturation, the entire material behaves as a single domain.</div></div>
+            </div>
+            <div class="acc-item">
+              <button class="acc-trigger" aria-expanded="false">Why iron filings align with fields<span class="acc-arrow">▾</span></button>
+              <div class="acc-content"><div class="acc-inner">Each iron filing is small enough to contain only a few magnetic domains. When placed in an external field, the domains align rapidly, turning the filing into a tiny bar magnet. The torque exerted by the external field physically rotates each filing to align with the local field direction. Adjacent magnetized filings then attract each other end-to-end, forming characteristic chain patterns.</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px" class="fade">
+        <div class="eq-block">
+          <div class="eq-name">Total Domain Energy</div>
+          <div class="eq-formula">E_total = E_exchange + E_anisotropy + E_magnetostatic + E_Zeeman</div>
+          <div class="eq-desc">The equilibrium domain structure minimizes the total energy, the sum of exchange, anisotropy, magnetostatic, and Zeeman energies.</div>
+          <div class="eq-vars">
+            <div class="eq-var"><span class="s">E_ex</span><span class="m">= Exchange interaction energy</span></div>
+            <div class="eq-var"><span class="s">E_an</span><span class="m">= Magnetocrystalline anisotropy</span></div>
+            <div class="eq-var"><span class="s">E_ms</span><span class="m">= Demagnetizing field energy</span></div>
+            <div class="eq-var"><span class="s">E_Z</span><span class="m">= Energy from external field</span></div>
+          </div>
+        </div>
+        <div class="eq-block">
+          <div class="eq-name">Heisenberg Exchange Energy</div>
+          <div class="eq-formula">E_ex = −2J Σ Sᵢ · Sⱼ</div>
+          <div class="eq-desc">The exchange interaction between neighboring atomic spins is responsible for parallel alignment within domains. J > 0 for ferromagnetic coupling.</div>
+          <div class="eq-vars">
+            <div class="eq-var"><span class="s">J</span><span class="m">= Exchange integral (coupling constant)</span></div>
+            <div class="eq-var"><span class="s">Sᵢ,Sⱼ</span><span class="m">= Spin angular momentum of atoms i, j</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3 · FIELD LINES -->
+    <section class="article-section" id="field-lines">
+      <div class="section-heading">
+        <span class="section-num">3</span>
+        <h2>Magnetic Field Line Patterns<a class="section-anchor" href="#field-lines">§</a></h2>
+        <button class="section-edit">[edit]</button>
+      </div>
+      <p>Iron filings provide a direct, visual representation of magnetic field topology. Different magnet configurations produce distinctly different field patterns, each revealing fundamental principles of electromagnetic theory.</p>
+      <div class="c2">
+        <figure>
+          <img src="https://d2xsxph8kpxj0f.cloudfront.net/310519663549993894/3QcNsbFrsVoSAVqVnd7zpx/field_lines_patterns_021032e1.png" alt="Four magnetic field line patterns">
+          <figcaption><strong>Fig. 3</strong> — Classic iron filing patterns: (1) single bar magnet, (2) attracting N-S poles, (3) repelling N-N poles, (4) horseshoe magnet.</figcaption>
+        </figure>
+        <div>
+          <div class="tabs-bar">
+            <button class="tab-btn active" data-tab="single">Single Bar</button>
+            <button class="tab-btn" data-tab="attract">Attracting</button>
+            <button class="tab-btn" data-tab="repel">Repelling</button>
+            <button class="tab-btn" data-tab="horseshoe">Horseshoe</button>
+          </div>
+          <div id="tab-single" class="tab-panel active"><div class="tab-box">
+            <h4>Single Bar Magnet</h4>
+            <p>The classic dipole pattern shows field lines emerging from the north pole, curving through space, and re-entering at the south pole. The field is strongest at the poles where filings are most densely concentrated, demonstrating Gauss's law for magnetism (∇·B = 0).</p>
+            <div class="tab-formula">Field strength ∝ 1/r³ (dipole approximation at large r)</div>
+          </div></div>
+          <div id="tab-attract" class="tab-panel"><div class="tab-box">
+            <h4>Attracting Magnets (N–S)</h4>
+            <p>When opposite poles face each other, field lines flow directly from north to south, creating a nearly uniform field in the gap. The iron filings form straight, parallel lines — analogous to a parallel-plate capacitor, but magnetic.</p>
+            <div class="tab-formula">Attractive force: F = (B² × A) / (2μ₀)</div>
+          </div></div>
+          <div id="tab-repel" class="tab-panel"><div class="tab-box">
+            <h4>Repelling Magnets (N–N)</h4>
+            <p>When like poles face each other, the field lines curve away, creating a null point of zero field between them. Iron filings are pushed away from this central zone, demonstrating the vector superposition principle.</p>
+            <div class="tab-formula">B_total = B₁ + B₂ (vector superposition)</div>
+          </div></div>
+          <div id="tab-horseshoe" class="tab-panel"><div class="tab-box">
+            <h4>Horseshoe Magnet</h4>
+            <p>The horseshoe configuration concentrates the magnetic field between its two poles, creating a strong, uniform field in the gap — ideal for electric motors, generators, and magnetic separators.</p>
+            <div class="tab-formula">Gap field ≈ B_r × (L_m / (L_m + L_g))</div>
+          </div></div>
+          <div class="field-props">
+            <h4>Properties of Magnetic Field Lines</h4>
+            <ul>
+              <li>Field lines always form closed loops (no magnetic monopoles)</li>
+              <li>Lines never cross each other (unique direction at each point)</li>
+              <li>Line density is proportional to field strength</li>
+              <li>Lines emerge from north poles, enter south poles (by convention)</li>
+              <li>Inside the magnet, lines run from south to north</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4 · HYSTERESIS -->
+    <section class="article-section" id="hysteresis">
+      <div class="section-heading">
+        <span class="section-num">4</span>
+        <h2>Magnetic Hysteresis<a class="section-anchor" href="#hysteresis">§</a></h2>
+        <button class="section-edit">[edit]</button>
+      </div>
+      <p>The hysteresis loop is the fingerprint of a magnetic material. It reveals how iron responds to changing magnetic fields and explains why iron filings retain some magnetization after the field is removed — a phenomenon central to permanent magnet technology and data storage. <sup style="font-size:11px;color:var(--link)">[4]</sup></p>
+      <div class="c2">
+        <figure>
+          <img src="https://d2xsxph8kpxj0f.cloudfront.net/310519663549993894/3QcNsbFrsVoSAVqVnd7zpx/hysteresis_loop_0b23bf39.png" alt="Magnetic hysteresis loop B-H curve">
+          <figcaption><strong>Fig. 4</strong> — The B-H hysteresis loop for iron, showing saturation (Bs), remanence (Br), and coercivity (Hc).</figcaption>
+        </figure>
+        <div>
+          <div class="d-cards" style="grid-template-columns:1fr 1fr;margin-bottom:16px">
+            <div class="d-card fade"><div class="dc-lbl">Saturation (Bs)</div><div class="dc-val">~1.7<span class="un">T</span></div><div class="dc-desc">Max flux density when all domains are aligned</div></div>
+            <div class="d-card gold fade"><div class="dc-lbl">Remanence (Br)</div><div class="dc-val" style="color:var(--gold)">~0.8<span class="un">T</span></div><div class="dc-desc">Residual magnetization after field removed</div></div>
+            <div class="d-card fade"><div class="dc-lbl">Coercivity (Hc)</div><div class="dc-val">~80<span class="un">A/m</span></div><div class="dc-desc">Reverse field to demagnetize (soft iron)</div></div>
+            <div class="d-card gold fade"><div class="dc-lbl">Permeability (μᵣ)</div><div class="dc-val" style="color:var(--gold)">~5000</div><div class="dc-desc">Relative permeability of pure iron</div></div>
+          </div>
+          <div class="callout gold">
+            <p><strong>Soft vs. Hard Iron:</strong> Pure iron has very low coercivity (~80 A/m) — it is a <em>soft</em> magnetic material that is easy to magnetize and demagnetize. Steel alloys with higher coercivity (thousands of A/m) are <em>hard</em> magnetic materials used for permanent magnets.</p>
+          </div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px" class="fade">
+        <div class="eq-block">
+          <div class="eq-name">Constitutive Relation</div>
+          <div class="eq-formula">B = μ₀(H + M) = μ₀μᵣH</div>
+          <div class="eq-desc">Relates magnetic flux density B to the applied field H and magnetization M.</div>
+          <div class="eq-vars">
+            <div class="eq-var"><span class="s">B</span><span class="m">= Magnetic flux density (Tesla)</span></div>
+            <div class="eq-var"><span class="s">μ₀</span><span class="m">= Permeability of free space</span></div>
+            <div class="eq-var"><span class="s">H</span><span class="m">= Magnetizing force (A/m)</span></div>
+            <div class="eq-var"><span class="s">μᵣ</span><span class="m">= Relative permeability</span></div>
+          </div>
+        </div>
+        <div class="eq-block">
+          <div class="eq-name">Hysteresis Loss</div>
+          <div class="eq-formula">W_hysteresis = ∮ H · dB</div>
+          <div class="eq-desc">The area enclosed by the hysteresis loop represents energy dissipated as heat per unit volume per cycle.</div>
+          <div class="eq-vars">
+            <div class="eq-var"><span class="s">W</span><span class="m">= Energy loss per cycle (J/m³)</span></div>
+            <div class="eq-var"><span class="s">H</span><span class="m">= Applied magnetic field</span></div>
+            <div class="eq-var"><span class="s">dB</span><span class="m">= Incremental flux density change</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5 · SIMULATOR -->
+    <section class="article-section" id="simulator">
+      <div class="section-heading">
+        <span class="section-num">5</span>
+        <h2>Interactive Field Simulator<a class="section-anchor" href="#simulator">§</a></h2>
+        <button class="section-edit">[edit]</button>
+      </div>
+      <p>The following interactive simulation reproduces the behavior of iron filings in a magnetic dipole field. The particles respond to a draggable virtual bar magnet, illustrating in real time how the local field direction and strength determine filing orientation and density. <sup style="font-size:11px;color:var(--link)">[5]</sup></p>
+      <div class="sim-wrap fade">
+        <div class="sim-head">
+          <div class="sim-head-l"><div class="sim-live"></div>Interactive — Iron Filing Simulator</div>
+          <div class="sim-head-r">Drag the N-S magnet to any position</div>
+        </div>
+        <canvas id="sim-canvas"></canvas>
+      </div>
+      <div class="sim-notes">
+        <div class="sim-note"><div class="sn-l">Interaction</div><p>Click and drag the N-S magnet across the field</p></div>
+        <div class="sim-note"><div class="sn-l">Observation</div><p>Filings align along the local field direction</p></div>
+        <div class="sim-note"><div class="sn-l">Physics</div><p>Brightness encodes field strength (B ∝ 1/r³)</p></div>
+      </div>
+    </section>
+
+    <!-- 6 · PROPERTIES -->
+    <section class="article-section" id="properties">
+      <div class="section-heading">
+        <span class="section-num">6</span>
+        <h2>Physical Properties of Iron<a class="section-anchor" href="#properties">§</a></h2>
+        <button class="section-edit">[edit]</button>
+      </div>
+      <p>The following tables summarize the fundamental physical and magnetic properties of iron relevant to its ferromagnetic behavior and its use as iron filings in field visualization.</p>
+      <div class="d-cards" id="props-grid" style="margin-bottom:24px">
+        <div class="d-card gold fade"><div class="dc-lbl">Curie Temperature</div><div class="dc-val" style="color:var(--gold)">1043<span class="un">K</span></div><div class="dc-desc">Above this, iron loses ferromagnetism and becomes paramagnetic</div></div>
+        <div class="d-card fade"><div class="dc-lbl">Magnetic Moment</div><div class="dc-val">2.22<span class="un">μB/atom</span></div><div class="dc-desc">From 4 unpaired 3d electrons per iron atom</div></div>
+        <div class="d-card gold fade"><div class="dc-lbl">Saturation Magnetization</div><div class="dc-val" style="color:var(--gold)">1.71<span class="un">T</span></div><div class="dc-desc">Maximum achievable magnetization (all domains aligned)</div></div>
+        <div class="d-card fade"><div class="dc-lbl">Exchange Constant</div><div class="dc-val">2.16<span class="un" style="font-size:10px">×10⁻¹¹ J/m</span></div><div class="dc-desc">Strength of spin-spin coupling between neighboring atoms</div></div>
+      </div>
+      <div class="data-table-wrap fade">
+        <div class="dt-head">Comprehensive Magnetic Properties Table</div>
+        <div style="overflow-x:auto"><table class="dt">
+          <thead><tr><th>Property</th><th>Value</th><th class="un">Unit</th><th class="sig">Significance</th></tr></thead>
+          <tbody>
+            <tr><td>Curie Temperature (Tc)</td><td class="vl">1043</td><td class="un">K</td><td class="sig">Ferromagnetic–paramagnetic transition</td></tr>
+            <tr><td>Saturation Magnetization (Ms)</td><td class="vl">1.71 × 10⁶</td><td class="un">A/m</td><td class="sig">Maximum possible magnetization</td></tr>
+            <tr><td>Saturation Flux Density (Bs)</td><td class="vl">2.15</td><td class="un">T</td><td class="sig">Maximum flux density in iron</td></tr>
+            <tr><td>Coercivity (Hc) — Pure Iron</td><td class="vl">~80</td><td class="un">A/m</td><td class="sig">Low coercivity = soft magnetic material</td></tr>
+            <tr><td>Relative Permeability (μᵣ)</td><td class="vl">~5,000</td><td class="un">—</td><td class="sig">Amplification of applied field</td></tr>
+            <tr><td>Magnetic Moment per Atom</td><td class="vl">2.22</td><td class="un">μB</td><td class="sig">From 4 unpaired 3d electrons</td></tr>
+            <tr><td>Exchange Constant (A)</td><td class="vl">2.16 × 10⁻¹¹</td><td class="un">J/m</td><td class="sig">Strength of spin-spin coupling</td></tr>
+            <tr><td>Magnetocrystalline Anisotropy (K1)</td><td class="vl">4.8 × 10⁴</td><td class="un">J/m³</td><td class="sig">Preference for ⟨100⟩ easy axis</td></tr>
+            <tr><td>Magnetostriction (λ100)</td><td class="vl">21 × 10⁻⁶</td><td class="un">—</td><td class="sig">Shape change under magnetization</td></tr>
+            <tr><td>Domain Wall Width</td><td class="vl">~40</td><td class="un">nm</td><td class="sig">Transition region between domains</td></tr>
+            <tr><td>Domain Wall Energy</td><td class="vl">~1.5 × 10⁻³</td><td class="un">J/m²</td><td class="sig">Energy per unit area of wall</td></tr>
+            <tr><td>Electrical Resistivity</td><td class="vl">9.7 × 10⁻⁸</td><td class="un">Ω·m</td><td class="sig">Affects eddy current losses</td></tr>
+          </tbody>
+        </table></div>
+      </div>
+    </section>
+
+    <!-- 7 · TYPES OF MAGNETISM -->
+    <section class="article-section" id="types">
+      <div class="section-heading">
+        <span class="section-num">7</span>
+        <h2>Types of Magnetism<a class="section-anchor" href="#types">§</a></h2>
+        <button class="section-edit">[edit]</button>
+      </div>
+      <p>Iron's ferromagnetism is just one of five fundamental types of magnetic behavior observed in materials. Understanding these types provides context for why iron filings respond so dramatically to magnetic fields compared to other substances.</p>
+      <figure style="margin-bottom:24px">
+        <img src="https://d2xsxph8kpxj0f.cloudfront.net/310519663549993894/3QcNsbFrsVoSAVqVnd7zpx/magnetism_types_0b73c90b.png" alt="Five types of magnetism compared">
+        <figcaption><strong>Fig. 5</strong> — Comparison of five types of magnetism showing atomic magnetic moment arrangements and their response to external fields.</figcaption>
+      </figure>
+      <div class="type-grid">
+        <div class="type-card fade"><div class="tc-head"><h4>Diamagnetism</h4><span class="tc-badge">Very Weak</span></div><p>Present in all materials. Induced magnetic moments oppose the applied field, creating very weak repulsion. Examples: copper, water, bismuth. χ ≈ −10⁻⁵.</p></div>
+        <div class="type-card fade"><div class="tc-head"><h4 style="color:var(--link)">Paramagnetism</h4><span class="tc-badge">Weak</span></div><p>Atoms have permanent magnetic moments that partially align with applied field. Weak attraction that disappears when field is removed. Examples: aluminum, platinum.</p></div>
+        <div class="type-card fade" style="border-color:var(--accent)"><div class="tc-head"><h4 style="color:var(--accent)">Ferromagnetism</h4><span class="tc-badge">Very Strong</span></div><p>Strong parallel alignment of atomic moments within domains. Iron, cobalt, nickel. χ ≈ 10² to 10⁵. <strong>This is what makes iron filings work.</strong></p></div>
+        <div class="type-card fade"><div class="tc-head"><h4 style="color:#9b4dca">Antiferromagnetism</h4><span class="tc-badge">None (net)</span></div><p>Adjacent atomic moments align antiparallel with equal magnitude, canceling net magnetization. Examples: chromium, manganese oxide.</p></div>
+        <div class="type-card fade"><div class="tc-head"><h4 style="color:var(--gold)">Ferrimagnetism</h4><span class="tc-badge">Moderate</span></div><p>Like antiferromagnetism but with unequal opposing moments, producing net magnetization. Examples: magnetite (Fe₃O₄), ferrites.</p></div>
+        <div class="type-card fade"><div class="tc-head"><h4 style="color:#1a9e5a">Superparamagnetism</h4><span class="tc-badge">Variable</span></div><p>Occurs in very small ferromagnetic nanoparticles (&lt;~20 nm). Thermal energy can flip the entire particle's magnetization. Critical in biomedical applications.</p></div>
+      </div>
+    </section>
+
+    <!-- 8 · HISTORY -->
+    <section class="article-section" id="history">
+      <div class="section-heading">
+        <span class="section-num">8</span>
+        <h2>Historical Journey<a class="section-anchor" href="#history">§</a></h2>
+        <button class="section-edit">[edit]</button>
+      </div>
+      <p>The study of iron filings and magnetism spans millennia, from ancient observations of lodestone to modern quantum mechanical explanations of ferromagnetism.</p>
+      <div class="c2 w4-6">
+        <figure>
+          <img src="https://d2xsxph8kpxj0f.cloudfront.net/310519663549993894/3QcNsbFrsVoSAVqVnd7zpx/faraday_historical_55495753.png" alt="Michael Faraday in his laboratory">
+          <figcaption><strong>Fig. 6</strong> — Michael Faraday in his laboratory at the Royal Institution, London, creating iron filing diagrams to demonstrate magnetic lines of force (c. 1851).</figcaption>
+        </figure>
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <blockquote style="padding:16px 20px;background:var(--gold-bg);border-left:3px solid var(--gold);border-radius:0 8px 8px 0;font-family:'Cormorant Garamond',serif;font-size:20px;font-style:italic;line-height:1.55;color:var(--text)">
+            "Nothing is too wonderful to be true, if it be consistent with the laws of nature."
+            <footer style="font-family:'Outfit',sans-serif;font-size:13px;font-style:normal;color:var(--text4);margin-top:8px">— Michael Faraday, Laboratory diary, March 19, 1849</footer>
+          </blockquote>
+          <div class="callout">
+            <p><strong>Faraday's Legacy:</strong> Faraday's iron filing experiments provided the first visual evidence that magnetic forces act through space via a "field" — a concept later formalized by Maxwell and foundational to Einstein's theory of relativity.</p>
+          </div>
+        </div>
+      </div>
+      <div class="timeline">
+        <div class="tl-item fade"><div class="tl-dot"></div><div class="tl-card"><div class="tl-yr">~600 BCE</div><div class="tl-title">Thales of Miletus</div><div class="tl-desc">Greek philosopher Thales observed that lodestone (magnetite, Fe₃O₄) could attract iron — one of the earliest recorded observations of magnetism.</div></div></div>
+        <div class="tl-item fade"><div class="tl-dot"></div><div class="tl-card"><div class="tl-yr">~1088 CE</div><div class="tl-title">Chinese Compass — Shen Kuo</div><div class="tl-desc">Shen Kuo described the magnetic needle compass in his Dream Pool Essays. Chinese navigators used magnetized iron needles for maritime navigation.</div></div></div>
+        <div class="tl-item fade"><div class="tl-dot"></div><div class="tl-card"><div class="tl-yr">1600</div><div class="tl-title">William Gilbert — De Magnete</div><div class="tl-desc">English physician William Gilbert published the first systematic study of magnetism, demonstrating that the Earth itself is a giant magnet.</div></div></div>
+        <div class="tl-item fade"><div class="tl-dot"></div><div class="tl-card"><div class="tl-yr">1820</div><div class="tl-title">Ørsted & Ampère — Electromagnetism</div><div class="tl-desc">Ørsted discovered that electric current produces a magnetic field; Ampère then showed that parallel wires carrying current exert forces on each other, unifying electricity and magnetism.</div></div></div>
+        <div class="tl-item fade"><div class="tl-dot"></div><div class="tl-card"><div class="tl-yr">1831–1851</div><div class="tl-title">Michael Faraday — Lines of Force</div><div class="tl-desc">Faraday discovered electromagnetic induction and introduced "lines of force." In 1851, he created his famous iron filing diagrams — the technique still used today in every physics classroom.</div></div></div>
+        <div class="tl-item fade"><div class="tl-dot"></div><div class="tl-card"><div class="tl-yr">1906–1907</div><div class="tl-title">Pierre-Ernest Weiss — Domain Theory</div><div class="tl-desc">Weiss proposed that ferromagnetic materials are divided into regions (domains) of uniform magnetization, explaining spontaneous magnetization and the hysteresis effect.</div></div></div>
+        <div class="tl-item fade"><div class="tl-dot"></div><div class="tl-card"><div class="tl-yr">1928</div><div class="tl-title">Werner Heisenberg — Quantum Exchange</div><div class="tl-desc">Heisenberg provided the quantum mechanical explanation for ferromagnetism through the exchange interaction, showing that parallel spin alignment arises from the Pauli exclusion principle.</div></div></div>
+      </div>
+    </section>
+
+    <!-- 9 · APPLICATIONS -->
+    <section class="article-section" id="applications">
+      <div class="section-heading">
+        <span class="section-num">9</span>
+        <h2>Applications & Uses<a class="section-anchor" href="#applications">§</a></h2>
+        <button class="section-edit">[edit]</button>
+      </div>
+      <p>Beyond classroom demonstrations, iron filings and the principles of ferromagnetism underpin critical technologies across science, industry, and everyday life.</p>
+      <div class="apps-grid">
+        <div class="app-card fade"><div class="app-icon">🔬</div><h4>Magnetic Particle Inspection</h4><p>A non-destructive testing method used in aerospace and structural engineering. Iron particles applied to magnetized components reveal surface cracks that disrupt the field.</p></div>
+        <div class="app-card fade"><div class="app-icon">📖</div><h4>Education & Research</h4><p>Iron filings remain the most intuitive tool for visualizing magnetic fields, from elementary school demonstrations to university research — providing tangible evidence of field topology.</p></div>
+        <div class="app-card fade"><div class="app-icon">⚡</div><h4>Electric Motors & Generators</h4><p>The same ferromagnetic principles that govern iron filings make electric motors work. Soft iron cores amplify magnetic fields by factors of thousands in these devices.</p></div>
+        <div class="app-card fade"><div class="app-icon">💾</div><h4>Magnetic Data Storage</h4><p>Hard drives store data by magnetizing tiny ferromagnetic regions — each analogous to a single iron filing magnetized in one direction (0) or the other (1). Modern drives exceed 1 Tbit/in².</p></div>
+        <div class="app-card fade"><div class="app-icon">🔌</div><h4>Transformers & Power Grid</h4><p>Electrical transformers use laminated soft iron cores to efficiently transfer energy through electromagnetic induction, with minimal hysteresis losses during AC magnetization cycles.</p></div>
+        <div class="app-card fade"><div class="app-icon">🧬</div><h4>Biomedical Applications</h4><p>Iron oxide nanoparticles are used as MRI contrast agents, in targeted drug delivery, and in magnetic hyperthermia cancer treatment — the same ferromagnetic properties at the nanoscale.</p></div>
+      </div>
+    </section>
+
+    <!-- REFERENCES -->
+    <section class="article-section" id="references">
+      <div class="section-heading">
+        <span class="section-num">10</span>
+        <h2>References<a class="section-anchor" href="#references">§</a></h2>
+      </div>
+      <ol class="ref-list">
+        <li class="ref-item"><span><span class="ref-author">Faraday, M.</span> (1852). <span class="ref-title">Experimental Researches in Electricity, Vol. III</span>. Taylor & Francis, London.</span></li>
+        <li class="ref-item"><span><span class="ref-author">Griffiths, D. J.</span> (2017). <span class="ref-title">Introduction to Electrodynamics</span> (4th ed.). Cambridge University Press.</span></li>
+        <li class="ref-item"><span><span class="ref-author">Weiss, P.</span> (1907). "L'hypothèse du champ moléculaire et la propriété ferromagnétique." <span class="ref-title">Journal de Physique</span>, 6, 661–690.</span></li>
+        <li class="ref-item"><span><span class="ref-author">Cullity, B. D., & Graham, C. D.</span> (2009). <span class="ref-title">Introduction to Magnetic Materials</span> (2nd ed.). Wiley-IEEE Press.</span></li>
+        <li class="ref-item"><span><span class="ref-author">Jiles, D.</span> (2015). <span class="ref-title">Introduction to Magnetism and Magnetic Materials</span> (3rd ed.). CRC Press.</span></li>
+        <li class="ref-item"><span><span class="ref-author">Kittel, C.</span> (2005). <span class="ref-title">Introduction to Solid State Physics</span> (8th ed.). Wiley.</span></li>
+      </ol>
+    </section>
+
+    <!-- CATEGORIES -->
+    <div class="categories">
+      <span class="cat-label">Categories:</span>
+      <div class="cat-tags">
+        <a href="#" class="cat-tag">Ferromagnetism</a>
+        <a href="#" class="cat-tag">Iron compounds</a>
+        <a href="#" class="cat-tag">Magnetic materials</a>
+        <a href="#" class="cat-tag">Physics experiments</a>
+        <a href="#" class="cat-tag">Electromagnetism</a>
+        <a href="#" class="cat-tag">Materials science</a>
+        <a href="#" class="cat-tag">Science education</a>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- ═══ FOOTER ════════════════════════════════ -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="logo">Ferro<span>Pedia</span></div>
+        <p>The free encyclopedia of magnetism and materials science. Scientific content based on established physics literature. Interactive simulations are simplified educational models.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Bibliography</h4>
+        <ul>
+          <li><a href="#">Griffiths — Introduction to Electrodynamics</a></li>
+          <li><a href="#">Cullity — Magnetic Materials</a></li>
+          <li><a href="#">Jiles — Magnetism & Magnetic Materials</a></li>
+          <li><a href="#">Kittel — Solid State Physics</a></li>
+        </ul>
+      </div>
+      <div class="footer-col" style="--accent:var(--gold)">
+        <h4>Key Constants</h4>
+        <div class="footer-consts">
+          <div class="footer-const"><span class="c">μ₀</span><span class="v">4π × 10⁻⁷ H/m</span></div>
+          <div class="footer-const"><span class="c">μB</span><span class="v">9.274 × 10⁻²⁴ J/T</span></div>
+          <div class="footer-const"><span class="c">kB</span><span class="v">1.381 × 10⁻²³ J/K</span></div>
+          <div class="footer-const"><span class="c">Fe Tc</span><span class="v">1043 K</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="last-edit">🕐 Last edited April 13, 2026 · 8,200 words · Revision 247</div>
+      <div class="license-badge">📜 Text available under CC BY-SA 4.0</div>
+    </div>
+  </div>
+</footer>
+
+<script>
+// ─── DARK MODE ────────────────────────────────────────────────────────
+const toggle=document.getElementById('theme-toggle');
+function setTheme(t){
+  document.documentElement.dataset.theme=t;
+  toggle.textContent=t==='dark'?'☀':'🌙';
+  localStorage.setItem('fp-theme',t);
+  updateSimColors();
+}
+toggle.onclick=()=>setTheme(document.documentElement.dataset.theme==='dark'?'light':'dark');
+const saved=localStorage.getItem('fp-theme');
+if(saved) setTheme(saved); else if(matchMedia('(prefers-color-scheme:dark)').matches) setTheme('dark');
+else toggle.textContent='🌙';
+
+// ─── PROGRESS BAR ────────────────────────────────────────────────────
+const pb=document.getElementById('progress-bar');
+window.addEventListener('scroll',()=>{
+  const p=(window.scrollY/(document.body.scrollHeight-window.innerHeight))*100;
+  pb.style.width=p+'%';
+},{passive:true});
+
+// ─── TOC ACTIVE SECTION ───────────────────────────────────────────────
+const secIds=['lead','fundamentals','domain-theory','field-lines','hysteresis','simulator','properties','types','history','applications','references'];
+function updateToc(){
+  const scrollY=window.scrollY+window.innerHeight*.3;
+  let active='lead';
+  secIds.forEach(id=>{const el=document.getElementById(id);if(el&&el.offsetTop<=scrollY)active=id;});
+  document.querySelectorAll('.toc-link').forEach(a=>{
+    a.classList.toggle('active',a.dataset.sec===active);
+  });
+}
+window.addEventListener('scroll',updateToc,{passive:true});
+updateToc();
+
+// ─── ACCORDION ────────────────────────────────────────────────────────
+document.querySelectorAll('.acc-trigger').forEach(btn=>{
+  btn.onclick=function(){
+    const exp=this.getAttribute('aria-expanded')==='true';
+    this.setAttribute('aria-expanded',!exp);
+    this.nextElementSibling.classList.toggle('open',!exp);
+  };
+});
+
+// ─── TABS ─────────────────────────────────────────────────────────────
+document.querySelectorAll('.tab-btn').forEach(btn=>{
+  btn.onclick=function(){
+    const tab=this.dataset.tab;
+    const sec=this.closest('section,div');
+    sec.querySelectorAll('.tab-btn').forEach(b=>b.classList.toggle('active',b===this));
+    sec.querySelectorAll('.tab-panel').forEach(p=>p.classList.toggle('active',p.id==='tab-'+tab));
+  };
+});
+
+// ─── FADE IN ON SCROLL ────────────────────────────────────────────────
+const observer=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in');}),{threshold:.1});
+document.querySelectorAll('.fade').forEach(el=>observer.observe(el));
+
+// ─── PROPS GRID RESPONSIVE ────────────────────────────────────────────
+function fixGrid(){
+  const g=document.getElementById('props-grid');
+  if(g) g.style.gridTemplateColumns=innerWidth<720?'1fr 1fr':'repeat(4,1fr)';
+}
+window.addEventListener('resize',fixGrid); fixGrid();
+
+// ─── SIMULATOR ────────────────────────────────────────────────────────
+const simCanvas=document.getElementById('sim-canvas');
+const simCtx=simCanvas.getContext('2d');
+let SW=0,SH=0,filings=[],simMagnet={x:0,y:0},dragging=false;
+let simLight=true;
+
+function updateSimColors(){
+  simLight=document.documentElement.dataset.theme!=='dark';
+}
+updateSimColors();
+
+function simResize(){
+  const rect=simCanvas.getBoundingClientRect();
+  const dpr=Math.min(devicePixelRatio||1,2);
+  SW=rect.width; SH=rect.height;
+  simCanvas.width=SW*dpr; simCanvas.height=SH*dpr;
+  simCtx.setTransform(dpr,0,0,dpr,0,0);
+}
+new ResizeObserver(()=>{
+  simResize();
+  simMagnet={x:SW/2,y:SH/2};
+  initFilings();
+}).observe(simCanvas);
+
+function initFilings(){
+  filings=[];
+  const sp=20;
+  for(let x=sp;x<SW-sp;x+=sp)
+    for(let y=sp;y<SH-sp;y+=sp)
+      filings.push({x:x+(Math.random()-.5)*10,y:y+(Math.random()-.5)*10,angle:Math.random()*Math.PI*2,len:5+Math.random()*5,w:.7+Math.random()*.7});
+}
+
+function drawSim(){
+  if(!SW||!SH){requestAnimationFrame(drawSim);return;}
+
+  const bg=simLight?'#f7f5ef':'#111009';
+  const bg2=simLight?'#ede9e0':'#181410';
+  simCtx.fillStyle=bg;
+  simCtx.fillRect(0,0,SW,SH);
+
+  // subtle grid
+  simCtx.fillStyle=simLight?'rgba(100,80,50,.06)':'rgba(200,180,140,.04)';
+  for(let x=0;x<SW;x+=28) for(let y=0;y<SH;y+=28){
+    simCtx.beginPath();simCtx.arc(x,y,.6,0,Math.PI*2);simCtx.fill();
+  }
+
+  const mx=simMagnet.x,my=simMagnet.y,po=30;
+  const np={x:mx-po,y:my},sp2={x:mx+po,y:my};
+
+  // faint field lines
+  simCtx.strokeStyle=simLight?'rgba(80,60,30,.08)':'rgba(180,160,100,.06)';
+  simCtx.lineWidth=.8;
+  for(let i=0;i<14;i++){
+    const sa=(i/14)*Math.PI*2;
+    let px=np.x+Math.cos(sa)*16,py=np.y+Math.sin(sa)*16;
+    simCtx.beginPath();simCtx.moveTo(px,py);
+    for(let s=0;s<80;s++){
+      const dnx=px-np.x,dny=py-np.y,dsx=px-sp2.x,dsy=py-sp2.y;
+      const dN=Math.sqrt(dnx*dnx+dny*dny)+1,dS=Math.sqrt(dsx*dsx+dsy*dsy)+1;
+      const fx=(dnx/(dN*dN*dN))*3200-(dsx/(dS*dS*dS))*3200;
+      const fy=(dny/(dN*dN*dN))*3200-(dsy/(dS*dS*dS))*3200;
+      const m=Math.sqrt(fx*fx+fy*fy)+.001;
+      px+=fx/m*4;py+=fy/m*4;
+      if(px<-20||px>SW+20||py<-20||py>SH+20) break;
+      simCtx.lineTo(px,py);
+    }
+    simCtx.stroke();
+  }
+
+  // filings
+  filings.forEach(f=>{
+    const dnx=f.x-np.x,dny=f.y-np.y,dsx=f.x-sp2.x,dsy=f.y-sp2.y;
+    const dN=Math.sqrt(dnx*dnx+dny*dny)+1,dS=Math.sqrt(dsx*dsx+dsy*dsy)+1;
+    const fx=(dnx/(dN*dN*dN))*5500-(dsx/(dS*dS*dS))*5500;
+    const fy=(dny/(dN*dN*dN))*5500-(dsy/(dS*dS*dS))*5500;
+    const ta=Math.atan2(fy,fx),fs=Math.sqrt(fx*fx+fy*fy);
+    let ad=ta-f.angle;
+    while(ad>Math.PI) ad-=Math.PI*2;
+    while(ad<-Math.PI) ad+=Math.PI*2;
+    f.angle+=ad*.12;
+    const b=Math.min(1,fs*3.5+.1);
+
+    let fillColor;
+    if(simLight){
+      const v=Math.floor(42-b*38);
+      fillColor=`rgba(${v},${Math.floor(v*.9)},${Math.floor(v*.75)},${.18+b*.72})`;
+    } else {
+      const r=Math.floor(70+b*130),g=Math.floor(120+b*110),bl=Math.floor(155+b*90);
+      fillColor=`rgba(${r},${g},${bl},${.18+b*.72})`;
+    }
+
+    simCtx.save();
+    simCtx.translate(f.x,f.y);simCtx.rotate(f.angle);
+    simCtx.fillStyle=fillColor;
+    simCtx.beginPath();simCtx.ellipse(0,0,f.len,f.w,0,0,Math.PI*2);simCtx.fill();
+    simCtx.restore();
+  });
+
+  // magnet body
+  simCtx.save();simCtx.translate(mx,my);
+
+  // N pole
+  const gN=simCtx.createLinearGradient(-po-16,-12,-po+16,12);
+  gN.addColorStop(0,'rgba(210,50,50,.95)');gN.addColorStop(1,'rgba(165,28,28,.95)');
+  simCtx.fillStyle=gN;simCtx.beginPath();
+  if(simCtx.roundRect)simCtx.roundRect(-po-16,-12,32,24,3);else simCtx.rect(-po-16,-12,32,24);
+  simCtx.fill();
+
+  // center connector
+  simCtx.fillStyle=simLight?'#c8c0b0':'#2a2820';
+  simCtx.fillRect(-po+16,-8,po*2-32,16);
+
+  // S pole
+  const gS=simCtx.createLinearGradient(po-16,-12,po+16,12);
+  gS.addColorStop(0,'rgba(35,90,195,.95)');gS.addColorStop(1,'rgba(22,65,160,.95)');
+  simCtx.fillStyle=gS;simCtx.beginPath();
+  if(simCtx.roundRect)simCtx.roundRect(po-16,-12,32,24,3);else simCtx.rect(po-16,-12,32,24);
+  simCtx.fill();
+
+  simCtx.fillStyle='rgba(255,255,255,.94)';
+  simCtx.font="bold 11px 'JetBrains Mono',monospace";
+  simCtx.textAlign='center';simCtx.textBaseline='middle';
+  simCtx.fillText('N',-po,0);simCtx.fillText('S',po,0);
+  simCtx.restore();
+
+  requestAnimationFrame(drawSim);
+}
+drawSim();
+
+simCanvas.addEventListener('mousedown',e=>{
+  const r=simCanvas.getBoundingClientRect();
+  const x=e.clientX-r.left,y=e.clientY-r.top;
+  if(Math.sqrt((x-simMagnet.x)**2+(y-simMagnet.y)**2)<60) dragging=true;
+});
+simCanvas.addEventListener('mousemove',e=>{
+  if(!dragging) return;
+  const r=simCanvas.getBoundingClientRect();
+  simMagnet.x=Math.max(60,Math.min(SW-60,e.clientX-r.left));
+  simMagnet.y=Math.max(22,Math.min(SH-22,e.clientY-r.top));
+});
+simCanvas.addEventListener('mouseup',()=>dragging=false);
+simCanvas.addEventListener('touchstart',e=>{e.preventDefault();const r=simCanvas.getBoundingClientRect();const x=e.touches[0].clientX-r.left,y=e.touches[0].clientY-r.top;if(Math.sqrt((x-simMagnet.x)**2+(y-simMagnet.y)**2)<60) dragging=true;},{passive:false});
+simCanvas.addEventListener('touchmove',e=>{e.preventDefault();if(!dragging)return;const r=simCanvas.getBoundingClientRect();simMagnet.x=Math.max(60,Math.min(SW-60,e.touches[0].clientX-r.left));simMagnet.y=Math.max(22,Math.min(SH-22,e.touches[0].clientY-r.top));},{passive:false});
+simCanvas.addEventListener('touchend',()=>dragging=false);
+</script>
+</body>
+</html>
