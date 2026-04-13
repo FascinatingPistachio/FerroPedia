@@ -1218,17 +1218,32 @@ mark.fp-hl{background:var(--gold-bg);color:var(--gold);border-radius:2px;padding
 </div>
 
 <script>
-const toggle=document.getElementById('theme-toggle');
+// ─── SHARED STATE ─────────────────────────────────────────────────────
+let toastTimer = null;
+const editToast = document.getElementById('edit-toast');
+
+function showToast(msg, duration){
+  editToast.textContent = msg || '✏️ Editing is disabled — this article is semi-protected.';
+  editToast.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=> editToast.classList.remove('show'), duration || 2800);
+}
+
+// ─── DARK MODE ────────────────────────────────────────────────────────
+let simLight = true;
+function updateSimColors(){ simLight = document.documentElement.dataset.theme !== 'dark'; }
+const toggle = document.getElementById('theme-toggle');
 function setTheme(t){
-  document.documentElement.dataset.theme=t;
-  toggle.textContent=t==='dark'?'☀':'🌙';
-  localStorage.setItem('fp-theme',t);
+  document.documentElement.dataset.theme = t;
+  toggle.textContent = t==='dark' ? '☀' : '🌙';
+  localStorage.setItem('fp-theme', t);
   updateSimColors();
 }
-toggle.onclick=()=>setTheme(document.documentElement.dataset.theme==='dark'?'light':'dark');
-const saved=localStorage.getItem('fp-theme');
-if(saved) setTheme(saved); else if(matchMedia('(prefers-color-scheme:dark)').matches) setTheme('dark');
-else toggle.textContent='🌙';
+toggle.onclick = ()=> setTheme(document.documentElement.dataset.theme==='dark' ? 'light' : 'dark');
+const saved = localStorage.getItem('fp-theme');
+if(saved) setTheme(saved);
+else if(matchMedia('(prefers-color-scheme:dark)').matches) setTheme('dark');
+else toggle.textContent = '🌙';
 
 // ─── PROGRESS BAR ────────────────────────────────────────────────────
 const pb=document.getElementById('progress-bar');
@@ -1284,12 +1299,6 @@ window.addEventListener('resize',fixGrid); fixGrid();
 const simCanvas=document.getElementById('sim-canvas');
 const simCtx=simCanvas.getContext('2d');
 let SW=0,SH=0,filings=[],simMagnet={x:0,y:0},dragging=false;
-let simLight=true;
-
-function updateSimColors(){
-  simLight=document.documentElement.dataset.theme!=='dark';
-}
-updateSimColors();
 
 function simResize(){
   const rect=simCanvas.getBoundingClientRect();
@@ -1409,182 +1418,227 @@ function drawSim(){
 }
 drawSim();
 
-simCanvas.addEventListener('mousedown',e=>{
-  const r=simCanvas.getBoundingClientRect();
-  const x=e.clientX-r.left,y=e.clientY-r.top;
-  if(Math.sqrt((x-simMagnet.x)**2+(y-simMagnet.y)**2)<60) dragging=true;
+// ── Mouse drag: use window so releasing outside canvas works ──────────
+simCanvas.addEventListener('mousedown', e=>{
+  const r = simCanvas.getBoundingClientRect();
+  const x = e.clientX-r.left, y = e.clientY-r.top;
+  if(Math.sqrt((x-simMagnet.x)**2 + (y-simMagnet.y)**2) < 70){ dragging=true; e.preventDefault(); }
 });
-simCanvas.addEventListener('mousemove',e=>{
+window.addEventListener('mousemove', e=>{
   if(!dragging) return;
-  const r=simCanvas.getBoundingClientRect();
-  simMagnet.x=Math.max(60,Math.min(SW-60,e.clientX-r.left));
-  simMagnet.y=Math.max(22,Math.min(SH-22,e.clientY-r.top));
+  const r = simCanvas.getBoundingClientRect();
+  simMagnet.x = Math.max(60, Math.min(SW-60, e.clientX-r.left));
+  simMagnet.y = Math.max(22, Math.min(SH-22, e.clientY-r.top));
 });
-simCanvas.addEventListener('mouseup',()=>dragging=false);
-simCanvas.addEventListener('touchstart',e=>{e.preventDefault();const r=simCanvas.getBoundingClientRect();const x=e.touches[0].clientX-r.left,y=e.touches[0].clientY-r.top;if(Math.sqrt((x-simMagnet.x)**2+(y-simMagnet.y)**2)<60) dragging=true;},{passive:false});
-simCanvas.addEventListener('touchmove',e=>{e.preventDefault();if(!dragging)return;const r=simCanvas.getBoundingClientRect();simMagnet.x=Math.max(60,Math.min(SW-60,e.touches[0].clientX-r.left));simMagnet.y=Math.max(22,Math.min(SH-22,e.touches[0].clientY-r.top));},{passive:false});
-simCanvas.addEventListener('touchend',()=>dragging=false);
+window.addEventListener('mouseup', ()=>{ dragging=false; });
 
-// ─── TOC TOGGLE (hide/show) ───────────────────────────────────────────
-const tocToggle=document.querySelector('.toc-toggle');
-const tocList=document.getElementById('toc-list');
-let tocVisible=true;
-if(tocToggle&&tocList){
-  tocToggle.onclick=function(){
-    tocVisible=!tocVisible;
-    tocList.style.display=tocVisible?'':'none';
-    this.textContent=tocVisible?'hide':'show';
+// ── Cursor: grab when over magnet, default elsewhere ──────────────────
+simCanvas.addEventListener('mousemove', e=>{
+  if(dragging){ simCanvas.style.cursor='grabbing'; return; }
+  const r = simCanvas.getBoundingClientRect();
+  const x = e.clientX-r.left, y = e.clientY-r.top;
+  simCanvas.style.cursor = Math.sqrt((x-simMagnet.x)**2+(y-simMagnet.y)**2)<70 ? 'grab' : 'default';
+});
+simCanvas.addEventListener('mouseleave', ()=>{ if(!dragging) simCanvas.style.cursor='default'; });
+
+// ── Touch ─────────────────────────────────────────────────────────────
+simCanvas.addEventListener('touchstart', e=>{
+  e.preventDefault();
+  const r = simCanvas.getBoundingClientRect();
+  const x = e.touches[0].clientX-r.left, y = e.touches[0].clientY-r.top;
+  if(Math.sqrt((x-simMagnet.x)**2+(y-simMagnet.y)**2) < 70) dragging=true;
+},{passive:false});
+window.addEventListener('touchmove', e=>{
+  if(!dragging) return;
+  e.preventDefault();
+  const r = simCanvas.getBoundingClientRect();
+  simMagnet.x = Math.max(60, Math.min(SW-60, e.touches[0].clientX-r.left));
+  simMagnet.y = Math.max(22, Math.min(SH-22, e.touches[0].clientY-r.top));
+},{passive:false});
+window.addEventListener('touchend', ()=>{ dragging=false; });
+
+// ─── REPLY BUTTONS ────────────────────────────────────────────────────
+document.querySelectorAll('.msg-reply').forEach(btn=>{
+  btn.onclick = ()=> showToast('💬 Sign in to your FerroPedia account to reply.');
+});
+
+// ─── TOC TOGGLE ───────────────────────────────────────────────────────
+const tocToggle = document.querySelector('.toc-toggle');
+const tocList   = document.getElementById('toc-list');
+let tocVisible  = true;
+if(tocToggle && tocList){
+  tocToggle.onclick = function(){
+    tocVisible = !tocVisible;
+    tocList.style.display   = tocVisible ? '' : 'none';
+    this.textContent        = tocVisible ? 'hide' : 'show';
   };
 }
 
 // ─── ARTICLE TABS (Article / Discussion / Edit / History) ────────────
-const artTabs=document.querySelectorAll('.art-tab');
-const artBody=document.querySelector('.article-body');
-const tabPanels=document.getElementById('article-tab-panels');
-const tabMap={0:'article',1:'discussion',2:'edit',3:'history'};
-artTabs.forEach((btn,i)=>{
-  btn.onclick=function(){
-    artTabs.forEach(b=>b.classList.remove('active'));
+const artTabs  = document.querySelectorAll('.art-tab');
+const artBody  = document.querySelector('.article-body');
+const tabPanels= document.getElementById('article-tab-panels');
+const tabMap   = {0:'article',1:'discussion',2:'edit',3:'history'};
+artTabs.forEach((btn, i)=>{
+  btn.onclick = function(){
+    artTabs.forEach(b=> b.classList.remove('active'));
     this.classList.add('active');
-    const which=tabMap[i];
-    if(which==='article'){
-      artBody.style.display='';
+    const which = tabMap[i];
+    if(which === 'article'){
+      artBody.style.display = '';
       tabPanels.classList.remove('visible');
     } else {
-      artBody.style.display='none';
+      artBody.style.display = 'none';
       tabPanels.classList.add('visible');
-      tabPanels.querySelectorAll('.atp-panel').forEach(p=>p.classList.remove('active'));
-      const target=document.getElementById('atp-'+which);
+      tabPanels.querySelectorAll('.atp-panel').forEach(p=> p.classList.remove('active'));
+      const target = document.getElementById('atp-'+which);
       if(target) target.classList.add('active');
     }
   };
 });
 
-// ─── [EDIT] SECTION BUTTONS ──────────────────────────────────────────
-const editToast=document.getElementById('edit-toast');
-let toastTimer=null;
-function showToast(){
-  editToast.classList.add('show');
-  clearTimeout(toastTimer);
-  toastTimer=setTimeout(()=>editToast.classList.remove('show'),2800);
-}
+// ─── SECTION [edit] BUTTONS ──────────────────────────────────────────
 document.querySelectorAll('.section-edit').forEach(btn=>{
-  btn.onclick=function(e){e.stopPropagation();showToast();};
+  btn.onclick = e=>{ e.stopPropagation(); showToast('✏️ Editing is disabled — this article is semi-protected.'); };
 });
 
-// ─── SEARCH ──────────────────────────────────────────────────────────
-// Build searchable index from article sections
-const searchIndex=[];
+// ─── SEARCH OVERLAY ──────────────────────────────────────────────────
+const searchIndex = [];
 document.querySelectorAll('.article-section, #lead').forEach(sec=>{
-  const heading=sec.querySelector('h2');
-  const sectionName=heading?heading.innerText.replace(/§$/,'').trim():(sec.id==='lead'?'Introduction':'');
-  const paragraphs=sec.querySelectorAll('p,li,.acc-inner,.tl-desc,.dc-desc,.eq-desc,.tab-box p');
-  paragraphs.forEach(el=>{
-    const txt=el.innerText.trim();
-    if(txt.length>30){
-      searchIndex.push({section:sectionName,sectionId:sec.id,text:txt,el:el});
-    }
+  const h2 = sec.querySelector('h2');
+  const secName = h2 ? h2.innerText.replace(/§$/,'').trim() : (sec.id==='lead'?'Introduction':'');
+  sec.querySelectorAll('p, li, .acc-inner, .tl-desc, .dc-desc, .eq-desc, .tab-box p').forEach(el=>{
+    const txt = el.innerText.trim();
+    if(txt.length > 30) searchIndex.push({section:secName, sectionId:sec.id, text:txt});
   });
 });
 
-const searchOverlay=document.getElementById('search-overlay');
-const smInput=document.getElementById('sm-input');
-const smResults=document.getElementById('sm-results');
-const headerSearchInput=document.querySelector('.header-search input');
+const searchOverlay    = document.getElementById('search-overlay');
+const smInput          = document.getElementById('sm-input');
+const smResults        = document.getElementById('sm-results');
+const headerSearchInput= document.querySelector('.header-search input');
+let   currentFocus     = -1;
 
-function openSearch(){
+function openSearch(prefill){
   searchOverlay.classList.add('open');
-  setTimeout(()=>smInput.focus(),50);
-  renderResults('');
+  if(prefill){ smInput.value = prefill; }
+  setTimeout(()=>{ smInput.focus(); smInput.select(); }, 50);
+  renderResults(smInput.value);
 }
 function closeSearch(){
   searchOverlay.classList.remove('open');
-  smInput.value='';
-  smResults.innerHTML='';
+  smInput.value = '';
+  smResults.innerHTML = '';
   clearHighlights();
   headerSearchInput.blur();
 }
-
-function escape(s){return s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-function snippet(text,query,maxLen=120){
-  const idx=text.toLowerCase().indexOf(query.toLowerCase());
-  if(idx===-1) return escape(text.slice(0,maxLen))+'…';
-  const start=Math.max(0,idx-40);
-  const end=Math.min(text.length,start+maxLen);
-  const pre=escape(text.slice(start,idx));
-  const match=escape(text.slice(idx,idx+query.length));
-  const post=escape(text.slice(idx+query.length,end));
-  return (start>0?'…':'')+pre+'<mark>'+match+'</mark>'+post+(end<text.length?'…':'');
+function esc(s){ return s.replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function snippet(text, q, maxLen=120){
+  const idx = text.toLowerCase().indexOf(q.toLowerCase());
+  if(idx===-1) return esc(text.slice(0,maxLen))+'…';
+  const start = Math.max(0, idx-40);
+  const end   = Math.min(text.length, start+maxLen);
+  return (start>0?'…':'')+esc(text.slice(start,idx))+'<mark>'+esc(text.slice(idx,idx+q.length))+'</mark>'+esc(text.slice(idx+q.length,end))+(end<text.length?'…':'');
 }
-
-let currentFocus=-1;
 function renderResults(q){
-  smResults.innerHTML='';
-  currentFocus=-1;
-  if(!q.trim()){
-    smResults.innerHTML='<div class="sm-empty">Start typing to search the article…</div>';
-    return;
-  }
-  const ql=q.toLowerCase();
-  const hits=searchIndex.filter(item=>item.text.toLowerCase().includes(ql)||item.section.toLowerCase().includes(ql));
-  const seen=new Set();const deduped=[];
-  hits.forEach(h=>{if(!seen.has(h.sectionId+h.section)){seen.add(h.sectionId+h.section);}deduped.push(h);});
-  const top=deduped.slice(0,10);
-  if(!top.length){smResults.innerHTML='<div class="sm-empty">No results for "'+escape(q)+'"</div>';return;}
-  top.forEach((item,i)=>{
-    const div=document.createElement('div');div.className='sm-result';
-    div.innerHTML='<div class="sr-sec">'+escape(item.section)+'</div><div class="sr-text">'+snippet(item.text,q)+'</div>';
-    div.onclick=()=>{closeSearch();highlightAndScroll(item.sectionId,q);};
+  smResults.innerHTML = '';
+  currentFocus = -1;
+  if(!q.trim()){ smResults.innerHTML='<div class="sm-empty">Start typing to search the article…</div>'; return; }
+  const ql = q.toLowerCase();
+  const hits = searchIndex.filter(item=> item.text.toLowerCase().includes(ql)||item.section.toLowerCase().includes(ql));
+  const seen = new Set(); const deduped = [];
+  hits.forEach(h=>{ if(!seen.has(h.sectionId)){ seen.add(h.sectionId); deduped.push(h); } });
+  if(!deduped.length){ smResults.innerHTML='<div class="sm-empty">No results for "'+esc(q)+'"</div>'; return; }
+  deduped.slice(0,10).forEach(item=>{
+    const div = document.createElement('div'); div.className='sm-result';
+    div.innerHTML = '<div class="sr-sec">'+esc(item.section)+'</div><div class="sr-text">'+snippet(item.text,q)+'</div>';
+    div.onclick = ()=>{ closeSearch(); highlightAndScroll(item.sectionId, q); };
     smResults.appendChild(div);
   });
 }
-
-smInput.addEventListener('input',()=>renderResults(smInput.value));
-smInput.addEventListener('keydown',e=>{
-  const results=smResults.querySelectorAll('.sm-result');
-  if(e.key==='ArrowDown'){e.preventDefault();currentFocus=Math.min(currentFocus+1,results.length-1);results.forEach((r,i)=>r.classList.toggle('focused',i===currentFocus));}
-  else if(e.key==='ArrowUp'){e.preventDefault();currentFocus=Math.max(currentFocus-1,0);results.forEach((r,i)=>r.classList.toggle('focused',i===currentFocus));}
-  else if(e.key==='Enter'&&currentFocus>=0){results[currentFocus].click();}
-  else if(e.key==='Escape'){closeSearch();}
+smInput.addEventListener('input', ()=> renderResults(smInput.value));
+smInput.addEventListener('keydown', e=>{
+  const res = smResults.querySelectorAll('.sm-result');
+  if(e.key==='ArrowDown'){ e.preventDefault(); currentFocus=Math.min(currentFocus+1,res.length-1); res.forEach((r,i)=>r.classList.toggle('focused',i===currentFocus)); }
+  else if(e.key==='ArrowUp'){ e.preventDefault(); currentFocus=Math.max(currentFocus-1,0); res.forEach((r,i)=>r.classList.toggle('focused',i===currentFocus)); }
+  else if(e.key==='Enter'&&currentFocus>=0){ res[currentFocus].click(); }
+  else if(e.key==='Escape'){ closeSearch(); }
 });
-document.getElementById('sm-close').onclick=closeSearch;
-searchOverlay.addEventListener('click',e=>{if(e.target===searchOverlay)closeSearch();});
-document.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key==='k'){e.preventDefault();openSearch();}});
-
-// Wire header search input → open overlay
+document.getElementById('sm-close').onclick = closeSearch;
+searchOverlay.addEventListener('click', e=>{ if(e.target===searchOverlay) closeSearch(); });
+document.addEventListener('keydown', e=>{ if((e.ctrlKey||e.metaKey)&&e.key==='k'){ e.preventDefault(); openSearch(); } });
 if(headerSearchInput){
-  headerSearchInput.addEventListener('focus',openSearch);
-  headerSearchInput.addEventListener('input',()=>{smInput.value=headerSearchInput.value;renderResults(headerSearchInput.value);openSearch();});
+  headerSearchInput.addEventListener('focus', ()=> openSearch());
+  headerSearchInput.addEventListener('input', ()=>{ smInput.value=headerSearchInput.value; renderResults(headerSearchInput.value); });
 }
 
-// Highlight text in article on jump
 function clearHighlights(){
   document.querySelectorAll('mark.fp-hl').forEach(m=>{
-    const parent=m.parentNode;
-    parent.replaceChild(document.createTextNode(m.textContent),m);
-    parent.normalize();
+    const p=m.parentNode; p.replaceChild(document.createTextNode(m.textContent),m); p.normalize();
   });
 }
-function highlightAndScroll(sectionId,q){
+function highlightAndScroll(sectionId, q){
   clearHighlights();
-  const sec=document.getElementById(sectionId);
+  const sec = document.getElementById(sectionId);
   if(!sec) return;
-  sec.scrollIntoView({behavior:'smooth',block:'start'});
+  sec.scrollIntoView({behavior:'smooth', block:'start'});
   if(!q) return;
-  const walk=document.createTreeWalker(sec,NodeFilter.SHOW_TEXT);
-  const nodes=[];let n;
-  while((n=walk.nextNode())) nodes.push(n);
-  const ql=q.toLowerCase();
+  const walk = document.createTreeWalker(sec, NodeFilter.SHOW_TEXT);
+  const nodes=[]; let n; while((n=walk.nextNode())) nodes.push(n);
+  const ql = q.toLowerCase();
   nodes.forEach(node=>{
-    const idx=node.nodeValue.toLowerCase().indexOf(ql);
+    const idx = node.nodeValue.toLowerCase().indexOf(ql);
     if(idx===-1) return;
-    const range=document.createRange();
-    range.setStart(node,idx);range.setEnd(node,idx+q.length);
-    const mark=document.createElement('mark');mark.className='fp-hl';
-    try { range.surroundContents(mark); } catch(e) {}
+    const range = document.createRange();
+    range.setStart(node,idx); range.setEnd(node,idx+q.length);
+    const mark = document.createElement('mark'); mark.className='fp-hl';
+    try{ range.surroundContents(mark); }catch(e){}
   });
-  setTimeout(clearHighlights,3000);
+  setTimeout(clearHighlights, 3000);
 }
+
+// ─── NAV LINKS ────────────────────────────────────────────────────────
+document.querySelector('.header-nav a:nth-child(1)').onclick = e=>{
+  e.preventDefault();
+  document.getElementById('lead').scrollIntoView({behavior:'smooth'});
+};
+document.querySelector('.header-nav a:nth-child(2)').onclick = e=>{
+  e.preventDefault(); openSearch();
+};
+document.querySelector('.header-nav a:nth-child(3)').onclick = e=>{
+  e.preventDefault();
+  document.querySelector('footer').scrollIntoView({behavior:'smooth'});
+};
+
+// ─── BREADCRUMB LINKS ─────────────────────────────────────────────────
+const breadLinks = document.querySelectorAll('.breadcrumb a');
+const breadActions = [
+  ()=> window.scrollTo({top:0, behavior:'smooth'}),          // FerroPedia
+  ()=> openSearch('physics'),                                 // Physics
+  ()=> openSearch('electromagnetic'),                         // Electromagnetism
+  ()=> document.getElementById('fundamentals').scrollIntoView({behavior:'smooth'}), // Ferromagnetism
+];
+breadLinks.forEach((a, i)=>{
+  if(breadActions[i]) a.onclick = e=>{ e.preventDefault(); breadActions[i](); };
+});
+
+// ─── CATEGORY TAGS ────────────────────────────────────────────────────
+document.querySelectorAll('.cat-tag').forEach(tag=>{
+  tag.onclick = e=>{
+    e.preventDefault();
+    openSearch(tag.textContent.trim());
+  };
+});
+
+// ─── FOOTER BIBLIOGRAPHY LINKS → jump to references ──────────────────
+document.querySelectorAll('.footer-col a').forEach(a=>{
+  a.onclick = e=>{
+    e.preventDefault();
+    // Switch to Article tab first if needed
+    if(artBody.style.display==='none'){ artTabs[0].click(); }
+    setTimeout(()=> document.getElementById('references').scrollIntoView({behavior:'smooth'}), 50);
+  };
+});
 </script>
 </body>
 </html>
